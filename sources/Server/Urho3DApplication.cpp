@@ -34,7 +34,7 @@ void Urho3DApplication::Setup ()
 
 void Urho3DApplication::Start ()
 {
-    // Set mouse to free move
+    // Set mouse to free mode
     Urho3D::Input *input = GetSubsystem <Urho3D::Input> ();
     input->SetMouseVisible (true);
     input->SetMouseMode (Urho3D::MM_FREE);
