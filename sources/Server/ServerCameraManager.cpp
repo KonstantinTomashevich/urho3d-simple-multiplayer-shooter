@@ -1,6 +1,6 @@
 #include "BuildConfiguration.hpp"
 #include "ServerCameraManager.hpp"
-#include "ServerConstants.hpp"
+#include <Shared/Constants.hpp>
 
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Core/CoreEvents.h>
@@ -54,28 +54,28 @@ void ServerCameraManager::Update (Urho3D::StringHash eventType, Urho3D::VariantM
     Urho3D::Input *input = GetSubsystem <Urho3D::Input> ();
 
     Urho3D::Vector3 move;
-    if (input->GetKeyDown (KEY_LEFT))
+    if (input->GetKeyDown (ServerConstants::KEY_LEFT))
         move.x_ -= 1;
 
-    if (input->GetKeyDown (KEY_RIGHT))
+    if (input->GetKeyDown (ServerConstants::KEY_RIGHT))
         move.x_ += 1;
 
-    if (input->GetKeyDown (KEY_FORWARD))
+    if (input->GetKeyDown (ServerConstants::KEY_FORWARD))
         move.z_ += 1;
 
-    if (input->GetKeyDown (KEY_BACK))
+    if (input->GetKeyDown (ServerConstants::KEY_BACK))
         move.z_ -= 1;
 
-    if (input->GetKeyDown (KEY_UP))
+    if (input->GetKeyDown (ServerConstants::KEY_UP))
         move.y_ += 1;
 
-    if (input->GetKeyDown (KEY_DOWN))
+    if (input->GetKeyDown (ServerConstants::KEY_DOWN))
         move.y_ -= 1;
 
-    if (input->GetKeyDown (KEY_SPEED_UP))
-        move *= SPEED_UP_MODIFER;
+    if (input->GetKeyDown (ServerConstants::KEY_SPEED_UP))
+        move *= ServerConstants::SPEED_UP_MODIFER;
 
-    move *= DEFAULT_CAMERA_MOVE_SPEED;
+    move *= ServerConstants::DEFAULT_CAMERA_MOVE_SPEED;
     move *= timestep;
     camera_->SetPosition (camera_->GetPosition () + move);
 }

@@ -2,3 +2,4 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/BuildConfiguration.hpp.cmake ${CMAKE
 set (TARGET_NAME RunServer)
 define_source_files ()
 setup_main_executable ()
+target_link_libraries (RunServer SharedBetweenServerAndGame)

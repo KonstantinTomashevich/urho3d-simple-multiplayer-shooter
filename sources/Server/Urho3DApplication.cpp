@@ -1,6 +1,6 @@
 #include "BuildConfiguration.hpp"
 #include "Urho3DApplication.hpp"
-#include "ServerConstants.hpp"
+#include <Shared/Constants.hpp>
 
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Network/Network.h>
@@ -41,13 +41,13 @@ void Urho3DApplication::Start ()
     // Load default scene
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
     scene_ = new Urho3D::Scene (context_);
-    scene_->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (DEFAULT_SERVER_SCENE)->GetRoot ());
+    scene_->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (ServerConstants::DEFAULT_SERVER_SCENE)->GetRoot ());
 
     // Setup camera manager
     cameraManager_ = new ServerCameraManager (context_);
     cameraManager_->Setup (scene_);
 
-    GetSubsystem <Urho3D::Network> ()->StartServer (SERVER_PORT);
+    GetSubsystem <Urho3D::Network> ()->StartServer (ServerConstants::SERVER_PORT);
 }
 
 void Urho3DApplication::Stop ()
