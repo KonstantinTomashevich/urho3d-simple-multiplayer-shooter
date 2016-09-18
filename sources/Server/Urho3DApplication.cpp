@@ -3,6 +3,7 @@
 #include <Shared/Constants.hpp>
 
 #include <Urho3D/Input/Input.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Network/Network.h>
 
 #include <Urho3D/Resource/ResourceCache.h>
@@ -11,7 +12,7 @@
 URHO3D_DEFINE_APPLICATION_MAIN (Urho3DApplication)
 
 Urho3DApplication::Urho3DApplication (Urho3D::Context *context) : Urho3D::Application (context),
-    scene_ (0), cameraManager_ (0)
+    scene_ (0), cameraManager_ (0), playersManager_ (0)
 {
 
 }
@@ -47,6 +48,11 @@ void Urho3DApplication::Start ()
     cameraManager_ = new ServerCameraManager (context_);
     cameraManager_->Setup (scene_);
 
+    // Setup players manager
+    playersManager_ = new PlayersManager (context_);
+    playersManager_->Setup (scene_);
+
+    // Start server
     GetSubsystem <Urho3D::Network> ()->StartServer (ServerConstants::SERVER_PORT);
 }
 
@@ -54,6 +60,7 @@ void Urho3DApplication::Stop ()
 {
     GetSubsystem <Urho3D::Network> ()->StopServer ();
     delete cameraManager_;
+    delete playersManager_;
     scene_->RemoveAllChildren ();
     delete scene_;
 }

@@ -16,37 +16,39 @@ const int KEY_FORWARD = Urho3D::KEY_W;
 const int KEY_BACK = Urho3D::KEY_S;
 const int KEY_UP = Urho3D::KEY_Q;
 const int KEY_DOWN = Urho3D::KEY_E;
+
+const int TIME_BEFORE_AUTOMATIC_NAMING = 1.0f;
+const int RESPAWN_TIME = 10.0f;
+
+const int HEALTH_REGENERATION = 3.0f;
+const int MAX_HEALTH = 100.0f;
+const int DEAD_PLAYERS_REMOVE_TIME = 10.0f;
+const float FIRE_COOLDOWN_TIME = 1.0f;
 }
 
-namespace Events
+namespace GameVars
 {
-namespace ServerEvents
-{
-/// Signalize for player that server created node for this player.
-URHO3D_EVENT (E_PLAYER_SPAWNED, PlayerSpawned)
-{
-    /// int.
-    URHO3D_PARAM (P_NODE_ID, NodeId);
+const Urho3D::StringHash HEALTH_VAR ("Health");
 }
 
-/// Signalize all players that one of players fires.
-URHO3D_EVENT (E_PLAYER_FIRES, PlayerFires)
+namespace NetworkMessageIds
 {
-    /// int.
-    URHO3D_PARAM (P_PLAYER_NODE_ID, PlayerNodeId);
-    /// Urho3D::Vector3.
-    URHO3D_PARAM (P_SHELL_POSITION, ShellPosition);
-    /// Urho3D::Vector3.
-    URHO3D_PARAM (P_SHELL_INITIAL_VELOCITY, ShellInitialVelocity);
-}
-}
+enum NetworkMessageId
+{
+    // Server to client messages
 
-namespace PlayerEvents
-{
-URHO3D_EVENT (E_SET_MOVE_REQUEST, SetMoveRequest)
-{
-    // Urho3D::Vector2.
-    URHO3D_PARAM (P_MOVE_VECTOR, MoveVector);
-}
-}
+    STC_PLAYER_NAME_SETTED = 101, // Data: nameString
+    STC_PLAYER_SPAWNED = 102, // Data: nodeId (unsigned)
+    STC_PLAYER_FIRES = 103, // Data: nodeId (unsigned), shellPosition (Vector3), shellInitialVelocity (Vector3), shellSpawnTime (long)
+    STC_CHAT_MESSAGE = 104, // Data: message (String)
+    STC_SERVER_MESSAGE = 105, // Data: message (String)
+
+    // Client to server messages
+
+    CTS_REQUEST_NAME = 201, // Data: nameString
+    CTS_SET_MOVE_VELOCITY_REQUEST = 202, // Data: moveVelocity (float)
+    CTS_SET_ROTATION_VELOCITY_REQUEST = 203, // Data: rotationVelocity (float)
+    CTS_REQUEST_FIRE = 204, // Data: none
+    CTS_REQUEST_CHAT_MESSAGE = 205 // Data: message (String)
+};
 }
