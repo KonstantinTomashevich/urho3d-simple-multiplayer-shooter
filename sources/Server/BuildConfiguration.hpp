@@ -1,0 +1,4 @@
+#define SERVER_ENABLE_ASSERTION
+#ifdef SERVER_ENABLE_ASSERTION
+    #undef NDEBUG
+#endif
