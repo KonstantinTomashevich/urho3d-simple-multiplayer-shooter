@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+# Generated AngelScript API header
+AngelScriptAPI.hpp
