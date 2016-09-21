@@ -12,9 +12,9 @@
 			<Cursor1 position="1480" topLine="25" />
 		</Cursor>
 	</File>
-	<File name="AngelScriptAPI.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="AngelScriptAPI.hpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="283" topLine="0" />
+			<Cursor1 position="370342" topLine="14471" />
 		</Cursor>
 	</File>
 	<File name="..\bin\Data\AngelScript\Ingame\Ingame.as" open="1" top="1" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -22,5 +22,5 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<EditorTabsLayout layout="08efcdd857e2a49600003ae200000002=0;angel_script_project:..\bin\Data\AngelScript\GameApplication.as,1;angel_script_project:..\bin\Data\AngelScript\LogInToServer\LogInToServer.as,*3;angel_script_project:..\bin\Data\AngelScript\Ingame\Ingame.as,2;angel_script_project:AngelScriptAPI.hpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=439;besth=303;minw=439;minh=303;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=08efcdd857e2a49600003ae200000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
+	<EditorTabsLayout layout="08efcdd857e2a49600003ae200000002=0;angel_script_project:..\bin\Data\AngelScript\GameApplication.as,1;angel_script_project:..\bin\Data\AngelScript\LogInToServer\LogInToServer.as,*2;angel_script_project:..\bin\Data\AngelScript\Ingame\Ingame.as@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=439;besth=303;minw=439;minh=303;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=08efcdd857e2a49600003ae200000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
 </CodeBlocks_layout_file>

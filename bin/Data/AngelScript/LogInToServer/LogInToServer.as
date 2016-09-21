@@ -1,5 +1,10 @@
 class LogInToServer : GameState
 {
+// *** Variables for connection process
+    Scene @scene_;
+    float timeFromConnectionStart_ = -1.0f;
+// ***   
+
 // *** Variables for UI
     protected IntVector2 lastScreenSize;
     protected XMLFile @styles_;
@@ -15,7 +20,9 @@ class LogInToServer : GameState
     protected LineEdit @nicknameEdit_;
     
     protected Button @connectButton_;
-    protected Text @connectButtionText_;
+    protected Text @connectButtonText_;
+    protected Text @connectingText_;
+    float currentColorChangingDelta_ = 0.5f;
 // ***
   
 // *** UI managing functions
@@ -55,10 +62,15 @@ class LogInToServer : GameState
         connectButton_ = ui.root.CreateChild ("Button", "connect_button");
         connectButton_.SetStyleAuto (styles_);
         
-        connectButtionText_ = connectButton_.CreateChild ("Text", "text");
-        connectButtionText_.text = "Connect";
-        connectButtionText_.SetStyleAuto (styles_);
-        connectButtionText_.SetAlignment (HA_CENTER, VA_CENTER);
+        connectButtonText_ = connectButton_.CreateChild ("Text", "text");
+        connectButtonText_.text = "Connect";
+        connectButtonText_.SetStyleAuto (styles_);
+        connectButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
+        
+        connectingText_ = ui.root.CreateChild ("Text", "connectingText");
+        connectingText_.text = "Connecting to \nXXX.XXX.XXX.XXX:XXXX...";
+        connectingText_.SetStyleAuto (styles_);
+        connectingText_.SetAlignment (HA_CENTER, VA_CENTER);
     }
     
     protected void ResizeUi (int width, int height)
@@ -68,6 +80,7 @@ class LogInToServer : GameState
         background_.SetSize (width, height);
         background_.imageRect = IntRect (
                         0, 0, background_.texture.width * aspectRatio, background_.texture.height);
+        connectingText_.fontSize = height * 0.1f;
         
         inputIpHint_.fontSize = height * 0.05f;                
         inputIpHint_.SetPosition (width / 2 - inputIpHint_.fontSize * 6, height * 0.1f);
@@ -90,9 +103,39 @@ class LogInToServer : GameState
         nicknameEdit_.SetPosition (width / 2 - inputNicknameHint_.fontSize * 6, height * 0.6f);
         nicknameEdit_.SetSize (inputNicknameHint_.fontSize * 12, height * 0.07f);
         
-        connectButtionText_.fontSize = height * 0.05f;
+        connectButtonText_.fontSize = height * 0.05f;
         connectButton_.SetPosition (width / 2 - inputNicknameHint_.fontSize * 6, height * 0.7f);
         connectButton_.SetSize (inputNicknameHint_.fontSize * 12, height * 0.1f);
+    }
+    
+    protected void UpdateUi (float timeStep)
+    {
+        if (timeFromConnectionStart_ < 0.0f)
+        {
+            connectingText_.visible = false;
+            Color color = connectButtonText_.colors [C_TOPLEFT];
+            if (color.r >= 1.0f or color.r <= 0.5f)
+                currentColorChangingDelta_ = -currentColorChangingDelta_;
+            
+            color.r += currentColorChangingDelta_ * timeStep;
+            color.g += currentColorChangingDelta_ * timeStep;
+            color.b += currentColorChangingDelta_ * timeStep;
+            connectButtonText_.color = color;
+        }
+        else
+        {
+            timeFromConnectionStart_ += timeStep;
+            connectingText_.visible = true;
+            
+            Color color = connectingText_.colors [C_TOPLEFT];
+            if (color.r >= 1.0f or color.r <= 0.5f)
+                currentColorChangingDelta_ = -currentColorChangingDelta_;
+            
+            color.r += currentColorChangingDelta_ * timeStep;
+            color.g += currentColorChangingDelta_ * timeStep;
+            color.b += currentColorChangingDelta_ * timeStep;
+            connectingText_.color = color;
+        }
     }
 // ***
 
@@ -125,6 +168,17 @@ class LogInToServer : GameState
             lastScreenSize.y = graphics.height;
             ResizeUi (lastScreenSize.x, lastScreenSize.y);
         }
+        UpdateUi (timeStep);
+        
+        if (network.serverConnection !is null and network.serverConnection.connected)
+            SwitchToIngameState ();
+        else if (timeFromConnectionStart_ > GameConstants__CONNECTION_TIMEOUT)
+        {
+            String ip = ipEdit_.text;
+            int port = portEdit_.text.ToInt ();
+            ErrorDialog ("Connection timeout!", "Connection to " + ip + ":" + port + " failed!");
+            engine.Exit ();
+        }
     }
     
     void Dispose ()
@@ -146,9 +200,28 @@ class LogInToServer : GameState
     {
         String ip = ipEdit_.text;
         int port = portEdit_.text.ToInt ();
+        
+        scene_ = Scene ();
+        network.Connect (ip, port, scene_);
+        timeFromConnectionStart_ = 0.0f;
+        connectingText_.text = "Connecting to\n" + ip + ":" + port + "...";
+        
+        inputIpHint_.visible = false;
+        ipEdit_.visible = false;
+        inputPortHint_.visible = false;
+        portEdit_.visible = false;
+        inputNicknameHint_.visible = false;
+        nicknameEdit_.visible = false;
+        connectButton_.visible = false;
+    }
+// ***
+
+// *** Switch to Ingame state on successfull connection
+    protected void SwitchToIngameState ()
+    {
         Dispose ();
         Ingame @ingameState = Ingame ();
-        ingameState.Connect (ip, port);
+        ingameState.Configure (scene_);
         ingameState.Setup ();
         currentGameState = ingameState;
     }

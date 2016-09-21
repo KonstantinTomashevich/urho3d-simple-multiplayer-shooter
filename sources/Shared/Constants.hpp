@@ -31,6 +31,7 @@ const float FIRE_COOLDOWN_TIME = 1.0f;
 namespace GameConstants
 {
 const Urho3D::StringHash HEALTH_VAR_HASH ("Health");
+const float CONNECTION_TIMEOUT = 10.0f;
 }
 
 namespace NetworkMessageIds

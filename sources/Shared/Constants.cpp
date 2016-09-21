@@ -54,6 +54,7 @@ GETTER (float, FIRE_COOLDOWN_TIME)
 namespace GameConstants
 {
 GETTER (Urho3D::StringHash, HEALTH_VAR_HASH)
+GETTER (float, CONNECTION_TIMEOUT)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
@@ -79,7 +80,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, ServerConstants, MAX_HEALTH);
     BIND_CONSTANT (engine, int, ServerConstants, DEAD_PLAYERS_REMOVE_TIME);
     BIND_CONSTANT (engine, float, ServerConstants, FIRE_COOLDOWN_TIME);
+
     BIND_CONSTANT (engine, StringHash, GameConstants, HEALTH_VAR_HASH);
+    BIND_CONSTANT (engine, float, GameConstants, CONNECTION_TIMEOUT);
 
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);

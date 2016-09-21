@@ -32,17 +32,24 @@ class Ingame : GameState
     }
 // ***
 
-// *** Connect fto server. Will be called before setup!
-    void Connect (String ip, int port)
+// *** Set the server scene which downloaded while logging into server.
+    void Configure (Scene @serverScene)
     {
-        scene_ = Scene ();
-        network.Connect (ip, port, scene_);
+        scene_ = serverScene;
+    }
+// ***
+
+// *** Setups local camera and screen viewport
+    void SetupScene ()
+    {
+        
     }
 // ***
     
 // *** State lifecycle functions
     void Setup ()
     {
+        SetupScene ();
         SetupUi ();
         lastScreenSize.x = graphics.width;
         lastScreenSize.y = graphics.height;
