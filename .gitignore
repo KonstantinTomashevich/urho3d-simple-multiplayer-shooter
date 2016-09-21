@@ -30,3 +30,6 @@
 
 # Generated AngelScript API header
 AngelScriptAPI.hpp
+
+# Local files
+*.user
