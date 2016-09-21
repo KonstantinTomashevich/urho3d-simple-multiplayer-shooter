@@ -1,7 +1,9 @@
 #pragma once
 #include <Urho3D/Container/Str.h>
 #include <Urho3D/Input/Input.h>
+#include <Urho3D/AngelScript/Script.h>
 
+void BindConstantsToAngelScript (Urho3D::Script *script);
 namespace ServerConstants
 {
 const Urho3D::String DEFAULT_SERVER_SCENE ("Maps/basic.xml");
@@ -26,9 +28,9 @@ const int DEAD_PLAYERS_REMOVE_TIME = 10.0f;
 const float FIRE_COOLDOWN_TIME = 1.0f;
 }
 
-namespace GameVars
+namespace GameConstants
 {
-const Urho3D::StringHash HEALTH_VAR ("Health");
+const Urho3D::StringHash HEALTH_VAR_HASH ("Health");
 }
 
 namespace NetworkMessageIds

@@ -1,0 +1,6 @@
+set (ANGELSCRIPT_API_HEADER_OUTPUT "\"${CMAKE_SOURCE_DIR}/angel_script_project/AngelScriptAPI.hpp\"")
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp.cmake ${CMAKE_CURRENT_SOURCE_DIR}/Defines.hpp)
+set (TARGET_NAME AngelScriptAPIGenerator)
+define_source_files ()
+setup_executable ()
+target_link_libraries (AngelScriptAPIGenerator SharedBetweenServerAndGame)

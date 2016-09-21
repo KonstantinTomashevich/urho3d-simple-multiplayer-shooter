@@ -20,7 +20,9 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../bin/Data/AngelScript/GameApplication.as" />
-		<Unit filename="AngelScriptAPI.h" />
+		<Unit filename="../bin/Data/AngelScript/Ingame/Ingame.as" />
+		<Unit filename="../bin/Data/AngelScript/LogInToServer/LogInToServer.as" />
+		<Unit filename="AngelScriptAPI.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

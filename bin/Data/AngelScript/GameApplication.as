@@ -1,26 +1,41 @@
-class GameApplication : ScriptObject
+// *** Interface which will be implemented by our game states.
+interface GameState
 {
-    GameApplication ()
-    {
-        log.Info ("Application constructed!");
-    }
-    ~GameApplication () 
-    {
-        
-    }
-    
-    void Start ()
-    {
-        log.Info ("Application started!");
-    }
-    
-    void Update (float timeStep)
-    {
-        log.Info ("Application updated!");
-    }
-    
-    void Stop ()
-    {
-        log.Info ("Application stopped!");
-    }
-};
+    void Setup ();
+    void Update (float timeStep);
+    void Dispose ();
+    void HandleEvent (StringHash eventType, VariantMap &eventData);
+}
+// ***
+
+#include "LogInToServer/LogInToServer.as"
+#include "Ingame/Ingame.as"
+
+// *** Global vartiables
+GameState @currentGameState;
+// ***
+
+// *** Application cycle functions
+void Start ()
+{
+    currentGameState = LogInToServer ();
+    currentGameState.Setup ();
+}
+
+void Update (float timeStep)
+{
+    currentGameState.Update (timeStep);
+}
+
+void Stop ()
+{
+    currentGameState.Dispose ();
+}
+// ***
+
+// *** Events resender
+void HandleEvent (StringHash eventType, VariantMap &eventData)
+{
+    currentGameState.HandleEvent (eventType, eventData);
+}
+// ***

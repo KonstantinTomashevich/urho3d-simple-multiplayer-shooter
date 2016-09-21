@@ -51,7 +51,7 @@ void PlayerState::Update (float timeStep)
         }
         else
         {
-            float health = node_->GetVar (GameVars::HEALTH_VAR).GetFloat ();
+            float health = node_->GetVar (GameConstants::HEALTH_VAR_HASH).GetFloat ();
             if (health < 0)
             {
                 // Server will remove all nodes with 'health < 0' after DEAD_PLAYERS_REMOVE_TIME.
@@ -63,7 +63,7 @@ void PlayerState::Update (float timeStep)
                 health += ServerConstants::HEALTH_REGENERATION * timeStep;
                 if (health > 100.0f)
                     health = 100.0f;
-                node_->SetVar (GameVars::HEALTH_VAR, Urho3D::Variant (health));
+                node_->SetVar (GameConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
                 if (timeFromLastFire_ <= 2 * ServerConstants::FIRE_COOLDOWN_TIME)
                     timeFromLastFire_ += timeStep;

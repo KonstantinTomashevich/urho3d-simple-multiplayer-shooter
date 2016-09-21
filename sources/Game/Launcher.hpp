@@ -9,7 +9,6 @@ class Launcher : public Urho3D::Application
 URHO3D_OBJECT (Launcher, Application)
 protected:
     Urho3D::ScriptFile *scriptMain_;
-    asIScriptObject *scriptObject_;
 public:
     Launcher (Urho3D::Context *context);
     virtual ~Launcher ();
