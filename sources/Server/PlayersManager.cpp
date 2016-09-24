@@ -99,6 +99,7 @@ void PlayersManager::OnClientConnected (Urho3D::StringHash eventType, Urho3D::Va
 
     Urho3D::Log::Write (Urho3D::LOG_INFO, "New player connected. It's adress is " + connection->ToString () + ".");
     players_ [Urho3D::StringHash (connection->ToString ())] = PlayerState (this, connection);
+    connection->SetScene (scene_);
 }
 
 void PlayersManager::OnClientDisconnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)

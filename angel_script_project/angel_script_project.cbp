@@ -20,8 +20,11 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../bin/Data/AngelScript/GameApplication.as" />
-		<Unit filename="../bin/Data/AngelScript/Ingame/Ingame.as" />
-		<Unit filename="../bin/Data/AngelScript/LogInToServer/LogInToServer.as" />
+		<Unit filename="../bin/Data/AngelScript/GameStatesSwitcher.as" />
+		<Unit filename="../bin/Data/AngelScript/Ingame/StateAdapter.as" />
+		<Unit filename="../bin/Data/AngelScript/LogInToServer/StateAdapter.as" />
+		<Unit filename="../bin/Data/AngelScript/LogInToServer/StateUi.as" />
+		<Unit filename="../bin/Data/AngelScript/SharedGlobals.as" />
 		<Unit filename="AngelScriptAPI.hpp" />
 		<Extensions>
 			<code_completion />

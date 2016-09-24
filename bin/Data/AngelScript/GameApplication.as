@@ -1,41 +1,32 @@
-// *** Interface which will be implemented by our game states.
-interface GameState
-{
-    void Setup ();
-    void Update (float timeStep);
-    void Dispose ();
-    void HandleEvent (StringHash eventType, VariantMap &eventData);
-}
-// ***
-
-#include "LogInToServer/LogInToServer.as"
-#include "Ingame/Ingame.as"
-
-// *** Global vartiables
-GameState @currentGameState;
-// ***
+#include "GameStatesSwitcher.as"
+#include "SharedGlobals.as"
+#include "LogInToServer/StateAdapter.as"
+#include "Ingame/StateAdapter.as"
 
 // *** Application cycle functions
 void Start ()
 {
-    currentGameState = LogInToServer ();
-    currentGameState.Setup ();
+    SharedGlobals::syncedGameScene = Scene ();
+    SharedGlobals::lastAdress = "localhost";
+    SharedGlobals::lastPort = ServerConstants__SERVER_PORT;
+    SharedGlobals::lastNickname = "UnknownPlayer";
+    GameStatesSwitcher::SetupState (LogInToServer::StateAdapter ());
 }
 
 void Update (float timeStep)
 {
-    currentGameState.Update (timeStep);
+    GameStatesSwitcher::UpdateState (timeStep);
 }
 
 void Stop ()
 {
-    currentGameState.Dispose ();
+    GameStatesSwitcher::DisposeCurrentState ();
 }
 // ***
 
 // *** Events resender
 void HandleEvent (StringHash eventType, VariantMap &eventData)
 {
-    currentGameState.HandleEvent (eventType, eventData);
+    GameStatesSwitcher::SendEventToCurrentState (eventType, eventData);
 }
 // ***
