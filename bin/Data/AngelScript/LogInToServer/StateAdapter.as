@@ -1,8 +1,10 @@
 #include "LogInToServer/StateUi.as"
 namespace LogInToServer
 {
+    // *** Game State globals
     StateUi @stateUi = StateUi ();
     bool isConnectingNow = false;
+    // ***
     
     class StateAdapter : GameStateAdapter
     {        
@@ -27,7 +29,8 @@ namespace LogInToServer
         void Update (float timeStep)
         {
             stateUi.Update (timeStep);
-            if (network.serverConnection !is null and network.serverConnection.sceneLoaded)
+            if (network.serverConnection !is null and network.serverConnection.sceneLoaded
+                and SharedGlobals::syncedGameScene.GetChildren ().length > 0)
                 HandleSuccessfullConnection ();
         }
         

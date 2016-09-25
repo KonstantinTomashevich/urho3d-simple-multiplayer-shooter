@@ -21,6 +21,7 @@
 		</Compiler>
 		<Unit filename="../bin/Data/AngelScript/GameApplication.as" />
 		<Unit filename="../bin/Data/AngelScript/GameStatesSwitcher.as" />
+		<Unit filename="../bin/Data/AngelScript/Ingame/LocalSceneManager.as" />
 		<Unit filename="../bin/Data/AngelScript/Ingame/StateAdapter.as" />
 		<Unit filename="../bin/Data/AngelScript/LogInToServer/StateAdapter.as" />
 		<Unit filename="../bin/Data/AngelScript/LogInToServer/StateUi.as" />

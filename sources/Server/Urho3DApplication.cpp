@@ -9,8 +9,6 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/Resource/XMLElement.h>
-
-#include <Urho3D/Graphics/Octree.h>
 URHO3D_DEFINE_APPLICATION_MAIN (Urho3DApplication)
 
 Urho3DApplication::Urho3DApplication (Urho3D::Context *context) : Urho3D::Application (context),

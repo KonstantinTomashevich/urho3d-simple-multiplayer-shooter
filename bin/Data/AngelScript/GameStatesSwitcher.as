@@ -27,6 +27,7 @@ namespace GameStatesSwitcher
     {
         if (gameState !is null)
             gameState.Dispose ();
+        gameState = null;
     }
     
     void UpdateState (float timeStep)
