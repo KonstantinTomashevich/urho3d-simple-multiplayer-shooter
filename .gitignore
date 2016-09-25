@@ -33,3 +33,4 @@ AngelScriptAPI.hpp
 
 # Local files
 *.user
+*.layout
