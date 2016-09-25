@@ -34,3 +34,7 @@ AngelScriptAPI.hpp
 # Local files
 *.user
 *.layout
+
+# Urho3D's local files.
+bin/CoreData/*
+urho3d-cmake/*
