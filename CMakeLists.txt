@@ -1,7 +1,4 @@
-# Set project name
 project (SimpleMultiplayerShooter)
-######################################
-# Set minimum version
 cmake_minimum_required (VERSION 2.8.6)
 if (COMMAND cmake_policy)
     cmake_policy (SET CMP0003 NEW)
@@ -16,13 +13,23 @@ if (COMMAND cmake_policy)
         cmake_policy (SET CMP0042 NEW)
     endif ()
 endif ()
-enable_testing ()
-# Set CMake modules search path
-set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/vendors/CMake/Modules)
-# Include Urho3D Cmake common module
+
+if (NOT CMAKE_MODULE_PATH)
+    message (STATUS "CMAKE_MODULE_PATH isn't setted! Setting CMAKE_MODULE_PATH to urho3d-cmake/Modules.")
+    set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/urho3d-cmake/Modules")
+    if (NOT EXISTS "${CMAKE_SOURCE_DIR}/urho3d-cmake/")
+        message (STATUS "Copying Urho3D's CMake modules...")
+        file (COPY "$ENV{URHO3D_HOME}/share/CMake/" DESTINATION "${CMAKE_SOURCE_DIR}/urho3d-cmake")
+    endif ()
+    message (STATUS "Setted CMAKE_MODULE_PATH to urho3d-cmake/Modules!")
+endif ()
+
+if (NOT EXISTS "${CMAKE_SOURCE_DIR}/bin/CoreData")
+    message (STATUS "Copying Urho3D's CoreData asset...")
+    file (COPY "$ENV{URHO3D_HOME}/share/Resources/CoreData/" DESTINATION "${CMAKE_SOURCE_DIR}/bin/CoreData")
+endif ()
+
 include (Urho3D-CMake-common)
-# Find Urho3D library
 find_package (Urho3D REQUIRED)
 include_directories (${URHO3D_INCLUDE_DIRS})
-#Include sources
 add_subdirectory (sources)
