@@ -15,6 +15,3 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
-
-# For Github Linguist -- detect *.as as AngelScript.
-*.as linguist-language=AngelScript
