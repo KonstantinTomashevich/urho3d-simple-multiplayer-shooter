@@ -29,10 +29,9 @@
 
 namespace ServerConstants
 {
-GETTER (Urho3D::String, DEFAULT_SERVER_SCENE)
 GETTER (float, DEFAULT_CAMERA_MOVE_SPEED)
 GETTER (float, SPEED_UP_MODIFER)
-GETTER (int, SERVER_PORT)
+GETTER (int, PORT)
 
 GETTER (int, KEY_SPEED_UP)
 GETTER (int, KEY_LEFT)
@@ -41,28 +40,34 @@ GETTER (int, KEY_FORWARD)
 GETTER (int, KEY_BACK)
 GETTER (int, KEY_UP)
 GETTER (int, KEY_DOWN)
-
 GETTER (int, TIME_BEFORE_AUTOMATIC_NAMING)
-GETTER (int, RESPAWN_TIME)
+}
 
+namespace GameplayConstants
+{
+
+GETTER (int, RESPAWN_TIME)
 GETTER (int, HEALTH_REGENERATION)
 GETTER (int, MAX_HEALTH)
 GETTER (int, DEAD_PLAYERS_REMOVE_TIME)
 GETTER (float, FIRE_COOLDOWN_TIME)
 }
 
-namespace GameConstants
+namespace SerializationConstants
 {
 GETTER (Urho3D::StringHash, HEALTH_VAR_HASH)
+GETTER (Urho3D::StringHash, OBJECT_TYPE_VAR_HASH)
+GETTER (int, OBJECT_TYPE_TERRAIN)
+GETTER (int, OBJECT_TYPE_OBSTACLE)
+GETTER (int, OBJECT_TYPE_PLAYER)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
 {
     asIScriptEngine *engine = script->GetScriptEngine ();
-    BIND_CONSTANT (engine, String, ServerConstants, DEFAULT_SERVER_SCENE);
     BIND_CONSTANT (engine, float, ServerConstants, DEFAULT_CAMERA_MOVE_SPEED);
     BIND_CONSTANT (engine, float, ServerConstants, SPEED_UP_MODIFER);
-    BIND_CONSTANT (engine, int, ServerConstants, SERVER_PORT);
+    BIND_CONSTANT (engine, int, ServerConstants, PORT);
 
     BIND_CONSTANT (engine, int, ServerConstants, KEY_SPEED_UP);
     BIND_CONSTANT (engine, int, ServerConstants, KEY_LEFT);
@@ -71,16 +76,19 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, ServerConstants, KEY_BACK);
     BIND_CONSTANT (engine, int, ServerConstants, KEY_UP);
     BIND_CONSTANT (engine, int, ServerConstants, KEY_DOWN);
-
     BIND_CONSTANT (engine, int, ServerConstants, TIME_BEFORE_AUTOMATIC_NAMING);
-    BIND_CONSTANT (engine, int, ServerConstants, RESPAWN_TIME);
 
-    BIND_CONSTANT (engine, int, ServerConstants, HEALTH_REGENERATION);
-    BIND_CONSTANT (engine, int, ServerConstants, MAX_HEALTH);
-    BIND_CONSTANT (engine, int, ServerConstants, DEAD_PLAYERS_REMOVE_TIME);
-    BIND_CONSTANT (engine, float, ServerConstants, FIRE_COOLDOWN_TIME);
+    BIND_CONSTANT (engine, int, GameplayConstants, RESPAWN_TIME);
+    BIND_CONSTANT (engine, int, GameplayConstants, HEALTH_REGENERATION);
+    BIND_CONSTANT (engine, int, GameplayConstants, MAX_HEALTH);
+    BIND_CONSTANT (engine, int, GameplayConstants, DEAD_PLAYERS_REMOVE_TIME);
+    BIND_CONSTANT (engine, float, GameplayConstants, FIRE_COOLDOWN_TIME);
 
-    BIND_CONSTANT (engine, StringHash, GameConstants, HEALTH_VAR_HASH);
+    BIND_CONSTANT (engine, StringHash, SerializationConstants, HEALTH_VAR_HASH);
+    BIND_CONSTANT (engine, StringHash, SerializationConstants, OBJECT_TYPE_VAR_HASH);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_TERRAIN);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_OBSTACLE);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_PLAYER);
 
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);

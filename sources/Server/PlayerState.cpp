@@ -14,13 +14,13 @@ PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connectio
     assert (connection);
     manager_ = manager;
     connection_ = connection;
-    timeFromLastFire_ = 2 * ServerConstants::FIRE_COOLDOWN_TIME;
+    timeFromLastFire_ = GameplayConstants::FIRE_COOLDOWN_TIME;
 
     name_ = Urho3D::String::EMPTY;
     timeBeforeAutomaticNaming_ = ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING;
 
     node_ = 0;
-    timeBeforeSpawn_ = ServerConstants::RESPAWN_TIME;
+    timeBeforeSpawn_ = GameplayConstants::RESPAWN_TIME;
 
     deaths_ = 0;
     kills_ = 0;
@@ -51,7 +51,7 @@ void PlayerState::Update (float timeStep)
         }
         else
         {
-            float health = node_->GetVar (GameConstants::HEALTH_VAR_HASH).GetFloat ();
+            float health = node_->GetVar (SerializationConstants::HEALTH_VAR_HASH).GetFloat ();
             if (health < 0)
             {
                 // Server will remove all nodes with 'health < 0' after DEAD_PLAYERS_REMOVE_TIME.
@@ -60,12 +60,12 @@ void PlayerState::Update (float timeStep)
             }
             else
             {
-                health += ServerConstants::HEALTH_REGENERATION * timeStep;
+                health += GameplayConstants::HEALTH_REGENERATION * timeStep;
                 if (health > 100.0f)
                     health = 100.0f;
-                node_->SetVar (GameConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
+                node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
-                if (timeFromLastFire_ <= 2 * ServerConstants::FIRE_COOLDOWN_TIME)
+                if (timeFromLastFire_ <= GameplayConstants::FIRE_COOLDOWN_TIME)
                     timeFromLastFire_ += timeStep;
             }
         }

@@ -8,7 +8,7 @@ void Start ()
 {
     SharedGlobals::syncedGameScene = Scene ();
     SharedGlobals::lastAdress = "localhost";
-    SharedGlobals::lastPort = ServerConstants__SERVER_PORT;
+    SharedGlobals::lastPort = ServerConstants__PORT;
     SharedGlobals::lastNickname = "UnknownPlayer";
     GameStatesSwitcher::SetupState (LogInToServer::StateAdapter ());
 }
