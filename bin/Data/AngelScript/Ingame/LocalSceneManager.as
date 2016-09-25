@@ -4,6 +4,44 @@ namespace Ingame
     {
         protected Node @cameraNode_;
         
+        protected void CreateLocals ()
+        {
+            Array <Node@> nodes;
+            nodes = SharedGlobals::syncedGameScene.GetChildren (true);
+            for (int index = 0; index < nodes.length; index++)
+            {
+                Node @childNode = nodes [index];
+                CreateLocalFor (childNode);
+            }
+        }
+        
+        protected void CreateLocalFor (Node @replicatedNode)
+        {
+            int nodeLocalType = replicatedNode.vars [SerializationConstants__OBJECT_TYPE_VAR_HASH].GetInt ();
+            if (nodeLocalType == SerializationConstants__OBJECT_TYPE_TERRAIN)
+            {
+                Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
+                localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
+                                                                       SceneConstants__TERRAIN_LOCAL_PREFAB))).
+                                   GetRoot ());
+                // Physics will be calculated on server
+                localNode.RemoveComponents ("RigidBody");
+                localNode.RemoveComponents ("CollsionShape");
+            }
+            
+            else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_OBSTACLE)
+            {
+                Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
+                localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
+                                                                       SceneConstants__OBSTACLE_LOCAL_PREFAB))).
+                                   GetRoot ());
+                // Physics will be calculated on server
+                localNode.RemoveComponents ("RigidBody");
+                localNode.RemoveComponents ("CollsionShape");
+            }
+            // TODO: Implement shell and player.
+        }
+        
         protected void CreateCamera ()
         {
             cameraNode_ = SharedGlobals::syncedGameScene.CreateChild ("camera", LOCAL);
@@ -36,13 +74,8 @@ namespace Ingame
         }
         
         void Setup ()
-        {
-            for (int index = 0; index < SharedGlobals::syncedGameScene.GetChildren (true).length; index++)
-            {
-                Node @childNode = SharedGlobals::syncedGameScene.GetChildren (true) [index];
-                log.Info ("Node [Id: " + childNode.id + "; Name: " + childNode.name + "]");
-            }
-            
+        {     
+            CreateLocals ();
             CreateZone ();
             CreateCamera ();
             SetupViewport ();
@@ -50,7 +83,7 @@ namespace Ingame
         
         void Update (float timeStep)
         {
-            cameraNode_.position = Vector3 (0, 20, 0);
+            cameraNode_.position = Vector3 (0, 40, 0);
             cameraNode_.rotation = Quaternion (90, 0, 0);
         }
         

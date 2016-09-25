@@ -33,9 +33,19 @@ namespace SerializationConstants
 {
 const Urho3D::StringHash HEALTH_VAR_HASH ("Health");
 const Urho3D::StringHash OBJECT_TYPE_VAR_HASH ("ObjectType");
+const int OBJECT_TYPE_WITHOUT_LOCALS = -1;
 const int OBJECT_TYPE_TERRAIN = 0;
 const int OBJECT_TYPE_OBSTACLE = 1;
 const int OBJECT_TYPE_PLAYER = 2;
+const int OBJECT_TYPE_SHELL = 3;
+}
+
+namespace SceneConstants
+{
+const Urho3D::String TERRAIN_LOCAL_PREFAB ("Objects/terrain_local.xml");
+const Urho3D::String OBSTACLE_LOCAL_PREFAB ("Objects/obstacle_local.xml");
+const Urho3D::String PLAYER_LOCAL_PREFAB ("Objects/player_local.xml");
+const Urho3D::String SHELL_LOCAL_PREFAB ("Objects/shell_local.xml");
 }
 
 namespace NetworkMessageIds
@@ -46,7 +56,7 @@ enum NetworkMessageId
 
     STC_PLAYER_NAME_SETTED = 101, // Data: nameString
     STC_PLAYER_SPAWNED = 102, // Data: nodeId (unsigned)
-    STC_PLAYER_FIRES = 103, // Data: nodeId (unsigned), shellPosition (Vector3), shellInitialVelocity (Vector3), shellSpawnTime (long)
+    STC_PLAYER_DIE = 103, // Data: nodeId (unsigned)
     STC_CHAT_MESSAGE = 104, // Data: message (String)
     STC_SERVER_MESSAGE = 105, // Data: message (String)
 

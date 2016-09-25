@@ -57,9 +57,19 @@ namespace SerializationConstants
 {
 GETTER (Urho3D::StringHash, HEALTH_VAR_HASH)
 GETTER (Urho3D::StringHash, OBJECT_TYPE_VAR_HASH)
+GETTER (int, OBJECT_TYPE_WITHOUT_LOCALS)
 GETTER (int, OBJECT_TYPE_TERRAIN)
 GETTER (int, OBJECT_TYPE_OBSTACLE)
 GETTER (int, OBJECT_TYPE_PLAYER)
+GETTER (int, OBJECT_TYPE_SHELL)
+}
+
+namespace SceneConstants
+{
+GETTER (Urho3D::String, TERRAIN_LOCAL_PREFAB)
+GETTER (Urho3D::String, OBSTACLE_LOCAL_PREFAB)
+GETTER (Urho3D::String, PLAYER_LOCAL_PREFAB)
+GETTER (Urho3D::String, SHELL_LOCAL_PREFAB)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
@@ -86,14 +96,21 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
 
     BIND_CONSTANT (engine, StringHash, SerializationConstants, HEALTH_VAR_HASH);
     BIND_CONSTANT (engine, StringHash, SerializationConstants, OBJECT_TYPE_VAR_HASH);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_WITHOUT_LOCALS);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_TERRAIN);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_OBSTACLE);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_PLAYER);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_SHELL);
+
+    BIND_CONSTANT (engine, String, SceneConstants, TERRAIN_LOCAL_PREFAB);
+    BIND_CONSTANT (engine, String, SceneConstants, OBSTACLE_LOCAL_PREFAB);
+    BIND_CONSTANT (engine, String, SceneConstants, PLAYER_LOCAL_PREFAB);
+    BIND_CONSTANT (engine, String, SceneConstants, SHELL_LOCAL_PREFAB);
 
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_SPAWNED", NetworkMessageIds::STC_PLAYER_SPAWNED);
-    engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_FIRES", NetworkMessageIds::STC_PLAYER_FIRES);
+    engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_DIE", NetworkMessageIds::STC_PLAYER_DIE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_CHAT_MESSAGE", NetworkMessageIds::STC_CHAT_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_SERVER_MESSAGE", NetworkMessageIds::STC_SERVER_MESSAGE);
 

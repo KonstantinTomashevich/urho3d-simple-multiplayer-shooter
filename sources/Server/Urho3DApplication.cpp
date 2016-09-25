@@ -26,6 +26,7 @@ void Urho3DApplication::GenerateLight ()
 {
     Urho3D::Node *lightNode = scene_->CreateChild ("light", Urho3D::REPLICATED);
     lightNode->SetRotation (Urho3D::Quaternion (45.0f, 25.0f, 0.0f));
+    lightNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_WITHOUT_LOCALS);
     Urho3D::Light *light = lightNode->CreateComponent <Urho3D::Light> (Urho3D::REPLICATED);
     light->SetLightType (Urho3D::LIGHT_DIRECTIONAL);
     light->SetCastShadows (true);
@@ -39,7 +40,7 @@ void Urho3DApplication::GenerateTerrain ()
     terrainNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_TERRAIN);
     Urho3D::Node *terrainLocal = terrainNode->CreateChild ("local", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
-    terrainLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> ("Objects/terrain_local.xml")->GetRoot ());
+    terrainLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::TERRAIN_LOCAL_PREFAB)->GetRoot ());
 }
 
 void Urho3DApplication::GenerateZone ()
@@ -90,7 +91,7 @@ void Urho3DApplication::GenerateObstacle (Urho3D::Vector3 position)
     obstacleNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_OBSTACLE);
     Urho3D::Node *obstacleLocal = obstacleNode->CreateChild ("local", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
-    obstacleLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> ("Objects/obstacle_local.xml")->GetRoot ());
+    obstacleLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::OBSTACLE_LOCAL_PREFAB)->GetRoot ());
 }
 
 Urho3DApplication::Urho3DApplication (Urho3D::Context *context) : Urho3D::Application (context),
