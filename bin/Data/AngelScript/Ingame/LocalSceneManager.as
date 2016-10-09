@@ -11,16 +11,18 @@ namespace Ingame
             for (int index = 0; index < nodes.length; index++)
             {
                 Node @childNode = nodes [index];
-                CreateLocalFor (childNode);
+                if (childNode.id < FIRST_LOCAL_ID and childNode.GetChild ("local") is null)
+                    CreateLocalFor (childNode);
             }
         }
         
         protected void CreateLocalFor (Node @replicatedNode)
         {
             int nodeLocalType = replicatedNode.vars [SerializationConstants__OBJECT_TYPE_VAR_HASH].GetInt ();
+            Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
+            
             if (nodeLocalType == SerializationConstants__OBJECT_TYPE_TERRAIN)
             {
-                Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
                 localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
                                                                        SceneConstants__TERRAIN_LOCAL_PREFAB))).
                                    GetRoot ());
@@ -31,7 +33,6 @@ namespace Ingame
             
             else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_OBSTACLE)
             {
-                Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
                 localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
                                                                        SceneConstants__OBSTACLE_LOCAL_PREFAB))).
                                    GetRoot ());
@@ -40,6 +41,8 @@ namespace Ingame
                 localNode.RemoveComponents ("CollsionShape");
             }
             // TODO: Implement shell and player.
+            
+            localNode.name = "local";
         }
         
         protected void CreateCamera ()
@@ -83,8 +86,13 @@ namespace Ingame
         
         void Update (float timeStep)
         {
+            // This is temporary. 
+            // TODO: Add normal camera handling after adding players spawn.
             cameraNode_.position = Vector3 (0, 40, 0);
             cameraNode_.rotation = Quaternion (90, 0, 0);
+            
+            // Creates locals for new objects (old have "local" child and will not be affected).
+            CreateLocals ();
         }
         
         void Clear ()
