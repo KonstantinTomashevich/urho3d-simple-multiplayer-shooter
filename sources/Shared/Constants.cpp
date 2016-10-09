@@ -113,10 +113,12 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_DIE", NetworkMessageIds::STC_PLAYER_DIE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_CHAT_MESSAGE", NetworkMessageIds::STC_CHAT_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_SERVER_MESSAGE", NetworkMessageIds::STC_SERVER_MESSAGE);
+    engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_RETURN_TIME_UNTIL_SPAWN", NetworkMessageIds::STC_RETURN_TIME_UNTIL_SPAWN);
 
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_NAME", NetworkMessageIds::CTS_REQUEST_NAME);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_SET_MOVE_VELOCITY_REQUEST", NetworkMessageIds::CTS_SET_MOVE_VELOCITY_REQUEST);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_SET_ROTATION_VELOCITY_REQUEST", NetworkMessageIds::CTS_SET_ROTATION_VELOCITY_REQUEST);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_FIRE", NetworkMessageIds::CTS_REQUEST_FIRE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_CHAT_MESSAGE", NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE);
+    engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_GET_TIME_UNTIL_SPAWN", NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN);
 }

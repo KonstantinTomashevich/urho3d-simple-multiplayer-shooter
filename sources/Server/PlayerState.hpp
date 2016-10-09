@@ -29,6 +29,7 @@ public:
 
     float GetTimeFromLastFire ();
     void SetTimeFromLastFire (float timeFromLastFire);
+    float GetTimeBeforeSpawn ();
 
     Urho3D::String GetName ();
     void SetName (Urho3D::String name);

@@ -59,6 +59,7 @@ enum NetworkMessageId
     STC_PLAYER_DIE = 103, // Data: nodeId (unsigned)
     STC_CHAT_MESSAGE = 104, // Data: message (String)
     STC_SERVER_MESSAGE = 105, // Data: message (String)
+    STC_RETURN_TIME_UNTIL_SPAWN = 106, // Data: time (float)
 
     // Client to server messages
 
@@ -66,6 +67,7 @@ enum NetworkMessageId
     CTS_SET_MOVE_VELOCITY_REQUEST = 202, // Data: moveVelocity (float)
     CTS_SET_ROTATION_VELOCITY_REQUEST = 203, // Data: rotationVelocity (float)
     CTS_REQUEST_FIRE = 204, // Data: none
-    CTS_REQUEST_CHAT_MESSAGE = 205 // Data: message (String)
+    CTS_REQUEST_CHAT_MESSAGE = 205, // Data: message (String)
+    CTS_GET_TIME_UNTIL_SPAWN = 206 // Data: empty
 };
 }

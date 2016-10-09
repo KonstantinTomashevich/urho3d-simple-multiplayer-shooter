@@ -16,6 +16,7 @@ namespace Ingame
         // *** Public variables
         String nickname_ = "...";
         bool isSpawned_ = false;
+        float timeUntilSpawn_ = 0.0;
         int lives_ = 0;
         // ***
         
@@ -67,8 +68,11 @@ namespace Ingame
             if (isSpawned_)
                 info += lives_ + "/100 HP.";
             else
-                info += "Not spawned.";
+                info += Floor (timeUntilSpawn_) + "s until respawn.";
             infoText_.text = info;
+            
+            if (!isSpawned_)
+                networkHandler.GetTimeUntilSpawn ();
         }
         // ***
         

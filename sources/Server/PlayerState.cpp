@@ -87,6 +87,11 @@ void PlayerState::SetTimeFromLastFire (float timeFromLastFire)
     timeFromLastFire_ = timeFromLastFire;
 }
 
+float PlayerState::GetTimeBeforeSpawn ()
+{
+    return timeBeforeSpawn_;
+}
+
 Urho3D::String PlayerState::GetName ()
 {
     return name_;
