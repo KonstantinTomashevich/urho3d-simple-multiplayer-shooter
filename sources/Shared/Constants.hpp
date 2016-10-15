@@ -18,6 +18,10 @@ const int KEY_BACK = Urho3D::KEY_S;
 const int KEY_UP = Urho3D::KEY_Q;
 const int KEY_DOWN = Urho3D::KEY_E;
 const int TIME_BEFORE_AUTOMATIC_NAMING = 1.0f;
+
+const float MINIMUM_DISTANCE_BETWEEN_OBSTACLES = 8.0f;
+const int MINIMUM_OBSTACLES_COUNT = 5;
+const int MAXIMUM_OBSTACLES_COUNT = 25;
 }
 
 namespace GameplayConstants

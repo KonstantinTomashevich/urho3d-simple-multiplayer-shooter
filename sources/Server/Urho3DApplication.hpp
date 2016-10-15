@@ -3,6 +3,7 @@
 #include <Urho3D/Scene/Scene.h>
 #include "ServerCameraManager.hpp"
 #include "PlayersManager.hpp"
+#include "Spawner.hpp"
 
 class Urho3DApplication : public Urho3D::Application
 {
@@ -11,14 +12,7 @@ protected:
     Urho3D::Scene *scene_;
     ServerCameraManager *cameraManager_;
     PlayersManager *playersManager_;
-
-    void GenerateScene ();
-    void GenerateLight ();
-    void GenerateTerrain ();
-    void GenerateZone ();
-    float GetNearestLength (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others);
-    void GenerateObstacles (int count);
-    void GenerateObstacle (Urho3D::Vector3 position);
+    Spawner *spawner_;
 public:
     Urho3DApplication (Urho3D::Context *context);
     virtual ~Urho3DApplication ();

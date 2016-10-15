@@ -41,6 +41,10 @@ GETTER (int, KEY_BACK)
 GETTER (int, KEY_UP)
 GETTER (int, KEY_DOWN)
 GETTER (int, TIME_BEFORE_AUTOMATIC_NAMING)
+
+GETTER (float, MINIMUM_DISTANCE_BETWEEN_OBSTACLES)
+GETTER (int, MINIMUM_OBSTACLES_COUNT)
+GETTER (int, MAXIMUM_OBSTACLES_COUNT)
 }
 
 namespace GameplayConstants
@@ -87,6 +91,10 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, ServerConstants, KEY_UP);
     BIND_CONSTANT (engine, int, ServerConstants, KEY_DOWN);
     BIND_CONSTANT (engine, int, ServerConstants, TIME_BEFORE_AUTOMATIC_NAMING);
+
+    BIND_CONSTANT (engine, float, ServerConstants, MINIMUM_DISTANCE_BETWEEN_OBSTACLES);
+    BIND_CONSTANT (engine, int, ServerConstants, MINIMUM_OBSTACLES_COUNT);
+    BIND_CONSTANT (engine, int, ServerConstants, MAXIMUM_OBSTACLES_COUNT);
 
     BIND_CONSTANT (engine, int, GameplayConstants, RESPAWN_TIME);
     BIND_CONSTANT (engine, int, GameplayConstants, HEALTH_REGENERATION);
