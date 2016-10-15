@@ -15,6 +15,12 @@ namespace Ingame
             stateUi.timeUntilSpawn_ = messageData.ReadFloat ();
         }
         
+        protected void HandleChatMessage (VariantMap &eventData)
+        {
+            VectorBuffer messageData = eventData ["Data"].GetBuffer ();
+            stateUi.AddChatMessage (messageData.ReadString () + ": " + messageData.ReadString ());
+        }
+        
         NetworkHandler ()
         {
             
@@ -32,6 +38,18 @@ namespace Ingame
             network.serverConnection.SendMessage (NMID_CTS_REQUEST_NAME, true, false, messageData);
         }
         
+        void SendChatMessage ()
+        {
+            String message = stateUi.messageEdit_.text;
+            stateUi.messageEdit_.text = "";
+            stateUi.messageEdit_.selected = false;
+            stateUi.messageEdit_.focus = false;
+            
+            VectorBuffer messageData = VectorBuffer ();
+            messageData.WriteString (message);
+            network.serverConnection.SendMessage (NMID_CTS_REQUEST_CHAT_MESSAGE, true, false, messageData);
+        }
+        
         void GetTimeUntilSpawn ()
         {
             VectorBuffer messageData = VectorBuffer ();
@@ -44,6 +62,8 @@ namespace Ingame
                 HandleNameSettedMessage (eventData);
             else if (eventData ["MessageID"] == NMID_STC_RETURN_TIME_UNTIL_SPAWN)
                 HandleTimeUntilSpawnReturned (eventData);
+            else if (eventData ["MessageID"] == NMID_STC_CHAT_MESSAGE)
+                HandleChatMessage (eventData);
         }
     };
 }

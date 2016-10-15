@@ -53,6 +53,15 @@ void PlayersManager::ProcessGetTimeUntilSpawn (Urho3D::Connection *connection)
     playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_RETURN_TIME_UNTIL_SPAWN, true, false, messageData);
 }
 
+void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data)
+{
+    PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
+    Urho3D::VectorBuffer messageData;
+    messageData.WriteString (data.ReadString ());
+    messageData.WriteString (playerState->GetName ());
+    playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
+}
+
 PlayersManager::PlayersManager (Urho3D::Context *context) : Urho3D::Object (context), players_ (), scene_ (0)
 {
 
@@ -153,6 +162,9 @@ void PlayersManager::OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::Var
 
     else if (messageId == NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN)
         ProcessGetTimeUntilSpawn (connection);
+
+    else if (messageId == NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE)
+        ProcessChatMessageRequest (connection, data);
 
     // TODO: Implement all messages processing.
 }

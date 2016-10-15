@@ -57,7 +57,7 @@ enum NetworkMessageId
     STC_PLAYER_NAME_SETTED = 101, // Data: nameString
     STC_PLAYER_SPAWNED = 102, // Data: nodeId (unsigned)
     STC_PLAYER_DIE = 103, // Data: nodeId (unsigned)
-    STC_CHAT_MESSAGE = 104, // Data: message (String)
+    STC_CHAT_MESSAGE = 104, // Data: senderName (String), message (String)
     STC_SERVER_MESSAGE = 105, // Data: message (String)
     STC_RETURN_TIME_UNTIL_SPAWN = 106, // Data: time (float)
 

@@ -1,6 +1,8 @@
 #include "Ingame/LocalSceneManager.as"
 #include "Ingame/NetworkHandler.as"
 #include "Ingame/StateUi.as"
+#include "Ingame/KeyboardListener.as"
+#include "Ingame/UiListener.as"
 
 namespace Ingame
 {    
@@ -8,6 +10,8 @@ namespace Ingame
     LocalSceneManager @localSceneManager = LocalSceneManager ();
     NetworkHandler @networkHandler = NetworkHandler ();
     StateUi @stateUi = StateUi ();
+    KeyboardListener @keyboardListener = KeyboardListener ();
+    UiListener @uiListener = UiListener ();
     // ***
     
     class StateAdapter : GameStateAdapter
@@ -25,6 +29,8 @@ namespace Ingame
         void Setup ()
         {
             SubscribeToEvent ("NetworkMessage", "HandleEvent");
+            SubscribeToEvent ("UIMouseClickEnd", "HandleEvent");
+            
             stateUi.Setup ();
             localSceneManager.Setup ();
             networkHandler.SendNickname ();
@@ -34,6 +40,7 @@ namespace Ingame
         {
             localSceneManager.Update (timeStep);
             stateUi.Update (timeStep);
+            keyboardListener.Update (timeStep);
         }
         
         void Dispose ()
@@ -45,7 +52,10 @@ namespace Ingame
         
         void HandleEvent (StringHash eventType, VariantMap &eventData)
         {
-            networkHandler.HandleEvent (eventType, eventData);
+            if (eventType == StringHash ("NetworkMessage"))
+                networkHandler.HandleEvent (eventType, eventData);
+            else if (eventType == StringHash ("UIMouseClickEnd"))
+                uiListener.HandleEvent (eventType, eventData);
         }
     };
 }

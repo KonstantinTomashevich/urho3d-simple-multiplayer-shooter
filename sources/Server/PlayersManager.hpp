@@ -12,6 +12,7 @@ protected:
     Urho3D::String CreateUniqueName (Urho3D::String requestedName);
     void ProcessNameRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
     void ProcessGetTimeUntilSpawn (Urho3D::Connection *connection);
+    void ProcessChatMessageRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
 public:
     PlayersManager (Urho3D::Context *context);
     virtual ~PlayersManager ();
