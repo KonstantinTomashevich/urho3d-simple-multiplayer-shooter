@@ -20,7 +20,6 @@ protected:
     int deaths_;
     int kills_;
 public:
-    PlayerState ();
     PlayerState (PlayersManager *manager, Urho3D::Connection *connection);
     virtual ~PlayerState ();
 

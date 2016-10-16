@@ -74,6 +74,9 @@ GETTER (Urho3D::String, TERRAIN_LOCAL_PREFAB)
 GETTER (Urho3D::String, OBSTACLE_LOCAL_PREFAB)
 GETTER (Urho3D::String, PLAYER_LOCAL_PREFAB)
 GETTER (Urho3D::String, SHELL_LOCAL_PREFAB)
+
+GETTER (Urho3D::Vector3, PLAYER_LOCAL_OFFSET)
+GETTER (Urho3D::Vector3, SHELL_LOCAL_OFFSET)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
@@ -114,6 +117,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, String, SceneConstants, OBSTACLE_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, PLAYER_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, SHELL_LOCAL_PREFAB);
+
+    BIND_CONSTANT (engine, Vector3, SceneConstants, PLAYER_LOCAL_OFFSET);
+    BIND_CONSTANT (engine, Vector3, SceneConstants, SHELL_LOCAL_OFFSET);
 
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);

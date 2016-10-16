@@ -3,11 +3,6 @@
 #include "PlayersManager.hpp"
 #include <Shared/Constants.hpp>
 
-PlayerState::PlayerState()
-{
-    // Empty constructor for normal using in Urho3D's containers.
-}
-
 PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connection)
 {
     assert (manager);
@@ -65,7 +60,9 @@ void PlayerState::Update (float timeStep)
                     health = 100.0f;
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
-                // TODO: Update node position dependinding on local node position (because physics is in local node).
+                node_->SetPosition (
+                            node_->GetChild ("local")->GetWorldPosition () - SceneConstants::PLAYER_LOCAL_OFFSET);
+                node_->GetChild ("local")->SetPosition (SceneConstants::PLAYER_LOCAL_OFFSET);
 
                 if (timeFromLastFire_ <= GameplayConstants::FIRE_COOLDOWN_TIME)
                     timeFromLastFire_ += timeStep;

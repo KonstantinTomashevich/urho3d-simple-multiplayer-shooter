@@ -25,7 +25,7 @@ namespace Ingame
                 stateUi.messageEdit_.focus = !stateUi.messageEdit_.focus;
             }
             
-            if (input.keyPress [KEY_SEND_CHAT_MESSAGE])
+            if (input.keyPress [KEY_SEND_CHAT_MESSAGE] and stateUi.messageEdit_.focus == true)
                 networkHandler.SendChatMessage ();
         }
     };

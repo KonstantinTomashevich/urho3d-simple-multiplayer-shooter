@@ -53,7 +53,8 @@ namespace Ingame
         void GetTimeUntilSpawn ()
         {
             VectorBuffer messageData = VectorBuffer ();
-            network.serverConnection.SendMessage (NMID_CTS_GET_TIME_UNTIL_SPAWN, true, false, messageData);
+            if (network.serverConnection !is null)
+                network.serverConnection.SendMessage (NMID_CTS_GET_TIME_UNTIL_SPAWN, true, false, messageData);
         }
         
         void HandleEvent (StringHash eventType, VariantMap &eventData)
