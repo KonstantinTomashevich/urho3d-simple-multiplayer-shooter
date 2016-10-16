@@ -1,11 +1,13 @@
 #include "BuildConfiguration.hpp"
 #include "PlayersManager.hpp"
+#include "Spawner.hpp"
 
 #include <Shared/Constants.hpp>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Core/CoreEvents.h>
+#include <Urho3D/Core/Context.h>
 
 Urho3D::String PlayersManager::CreateUniqueName (Urho3D::String requestedName)
 {
@@ -123,7 +125,14 @@ void PlayersManager::RequestName (PlayerState *requester)
 void PlayersManager::RequestRespawn (PlayerState *requester)
 {
     assert (!requester->GetNode ());
-    // TODO: Implement.
+    assert (requester->GetTimeBeforeSpawn () <= 0);
+    Spawner *spawner = context_->GetSubsystem <Spawner> ();
+    unsigned id = spawner->SpawnPlayer ();
+    requester->SetNode (scene_->GetNode (id));
+
+    Urho3D::VectorBuffer messageData;
+    messageData.WriteUInt (id);
+    requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_SPAWNED, true, false, messageData);
 }
 
 void PlayersManager::OnClientConnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -145,8 +154,8 @@ void PlayersManager::OnClientDisconnected (Urho3D::StringHash eventType, Urho3D:
     if (playerState->GetNode ())
         playerState->GetNode ()->Remove ();
 
-    players_.Erase (Urho3D::StringHash (connection->ToString ()));
     delete playerState;
+    players_.Erase (Urho3D::StringHash (connection->ToString ()));
 }
 
 void PlayersManager::OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)

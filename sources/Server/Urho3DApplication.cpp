@@ -67,9 +67,6 @@ void Urho3DApplication::Start ()
 void Urho3DApplication::Stop ()
 {
     GetSubsystem <Urho3D::Network> ()->StopServer ();
-    delete cameraManager_;
-    delete playersManager_;
-    delete spawner_;
     scene_->RemoveAllChildren ();
     delete scene_;
 }

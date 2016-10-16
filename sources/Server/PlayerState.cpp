@@ -65,6 +65,8 @@ void PlayerState::Update (float timeStep)
                     health = 100.0f;
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
+                // TODO: Update node position dependinding on local node position (because physics is in local node).
+
                 if (timeFromLastFire_ <= GameplayConstants::FIRE_COOLDOWN_TIME)
                     timeFromLastFire_ += timeStep;
             }

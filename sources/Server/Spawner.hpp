@@ -24,5 +24,6 @@ public:
     float GetMinimumDistanceBetween (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others);
     void GenerateObstacles (int count);
     void AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion rotation);
+    unsigned SpawnPlayer ();
 };
 

@@ -119,3 +119,25 @@ void Spawner::AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion 
     placedObstacles_.Push (position);
 }
 
+unsigned Spawner::SpawnPlayer ()
+{
+    Urho3D::Vector3 position;
+    float minimumDistance;
+    do
+    {
+        position = Urho3D::Vector3 (Urho3D::Random (-50.0f, 50.0f), 2.5f, Urho3D::Random (-50.0f, 50.0f));
+        minimumDistance = GetMinimumDistanceBetween (position, placedObstacles_);
+    }
+    while (minimumDistance < ServerConstants::MINIMUM_DISTANCE_BETWEEN_OBSTACLES && minimumDistance > 0.0f);
+
+    Urho3D::Node *playerNode = scene_->CreateChild ("player", Urho3D::REPLICATED);
+    playerNode->SetPosition (position);
+    playerNode->SetRotation (Urho3D::Quaternion (0, Urho3D::Random (360.0f), 0));
+    playerNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_PLAYER);
+
+    Urho3D::Node *playerLocal = playerNode->CreateChild ("local", Urho3D::LOCAL);
+    Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
+    playerLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::PLAYER_LOCAL_PREFAB)->GetRoot ());
+    return playerNode->GetID ();
+}
+
