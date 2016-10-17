@@ -39,6 +39,7 @@ namespace Ingame
         void Update (float timeStep)
         {
             localSceneManager.Update (timeStep);
+            networkHandler.Update (timeStep);
             stateUi.Update (timeStep);
             keyboardListener.Update (timeStep);
         }

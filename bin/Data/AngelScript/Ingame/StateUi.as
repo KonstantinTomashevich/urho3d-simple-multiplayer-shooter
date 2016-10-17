@@ -23,7 +23,6 @@ namespace Ingame
         String nickname_ = "...";
         bool isSpawned_ = false;
         float timeUntilSpawn_ = 0.0;
-        int lives_ = 0;
         // ***
         
         StateUi ()
@@ -100,7 +99,7 @@ namespace Ingame
             
             String info = nickname_ + "\n";
             if (isSpawned_)
-                info += lives_ + "/100 HP.";
+                info += Floor (localSceneManager.playerLives) + "/100 HP.";
             else
                 info += Floor (timeUntilSpawn_) + "s until respawn.";
             infoText_.text = info;

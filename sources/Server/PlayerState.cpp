@@ -42,7 +42,10 @@ void PlayerState::Update (float timeStep)
             if (timeBeforeSpawn_ >= 0)
                 timeBeforeSpawn_ -= timeStep;
             else
+            {
                 manager_->RequestRespawn (this);
+                node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::MAX_HEALTH);
+            }
         }
         else
         {

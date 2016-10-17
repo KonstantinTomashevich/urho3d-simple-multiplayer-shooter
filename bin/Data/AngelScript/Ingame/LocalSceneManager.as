@@ -3,11 +3,11 @@ namespace Ingame
     class LocalSceneManager
     {
         protected Node @cameraNode_;
+        protected Node @playerNode_;
         
         protected void CreateLocals ()
         {
-            Array <Node@> nodes;
-            nodes = SharedGlobals::syncedGameScene.GetChildren (true);
+            Array <Node @> nodes = SharedGlobals::syncedGameScene.GetChildren (true);
             for (int index = 0; index < nodes.length; index++)
             {
                 Node @childNode = nodes [index];
@@ -40,7 +40,18 @@ namespace Ingame
                 localNode.RemoveComponents ("RigidBody");
                 localNode.RemoveComponents ("CollsionShape");
             }
-            // TODO: Implement shell and player.
+            
+            else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_PLAYER)
+            {
+                localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
+                                                                       SceneConstants__PLAYER_LOCAL_PREFAB))).
+                                   GetRoot ());
+                // Physics will be calculated on server
+                localNode.RemoveComponents ("RigidBody");
+                localNode.RemoveComponents ("CollsionShape");
+            }
+            
+            // TODO: Implement shell.
             
             localNode.name = "local";
         }
@@ -82,22 +93,67 @@ namespace Ingame
             CreateZone ();
             CreateCamera ();
             SetupViewport ();
+            
+            cameraNode_.position = Vector3 (0, 40, 0);
+            cameraNode_.rotation = Quaternion (90, 0, 0);
         }
         
         void Update (float timeStep)
-        {
-            // This is temporary. 
-            // TODO: Add normal camera handling after adding players spawn.
-            cameraNode_.position = Vector3 (0, 40, 0);
-            cameraNode_.rotation = Quaternion (90, 0, 0);
-            
+        {           
             // Creates locals for new objects (old have "local" child and will not be affected).
             CreateLocals ();
+            
+            if (playerNode_ !is null)
+            {
+                cameraNode_.position = playerNode_.LocalToWorld (Vector3 (0, 4, -8));
+                cameraNode_.LookAt (playerNode_.position);
+            }
+            
+            if (playerNode_ !is null and playerLives < 0.0f)
+            {
+                playerNode_ = null;
+                stateUi.isSpawned_ = true;
+            }
         }
         
         void Clear ()
         {
             
+        }
+        
+        Node @get_playerNode ()
+        {
+            return playerNode_;
+        }
+        
+        uint get_playerNodeId ()
+        {
+            if (playerNode_ !is null)
+                return playerNode_.id;
+            else
+                return 0;
+        }
+        
+        void set_playerNodeId (uint id)
+        {            
+            Array <Node @>nodes = SharedGlobals::syncedGameScene.GetChildren (true);
+            for (int index = 0; index < nodes.length; index++)
+            {
+                Node @scanningNode = nodes [index];
+                if (scanningNode.id == id)
+                {
+                    playerNode_ = scanningNode;
+                    return;
+                }
+            }
+        }
+        
+        float get_playerLives ()
+        {
+            if (playerNode_ !is null)
+                return playerNode_.vars [SerializationConstants__HEALTH_VAR_HASH].GetFloat ();
+            else
+                return -1;
         }
     };
 }

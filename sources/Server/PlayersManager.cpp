@@ -126,6 +126,7 @@ void PlayersManager::RequestRespawn (PlayerState *requester)
 {
     assert (!requester->GetNode ());
     assert (requester->GetTimeBeforeSpawn () <= 0);
+
     Spawner *spawner = context_->GetSubsystem <Spawner> ();
     unsigned id = spawner->SpawnPlayer ();
     requester->SetNode (scene_->GetNode (id));

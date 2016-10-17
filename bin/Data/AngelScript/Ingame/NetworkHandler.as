@@ -2,6 +2,9 @@ namespace Ingame
 {
     class NetworkHandler
     {
+        protected bool waitingForSpawnSync_ = false;
+        protected uint playerExpectedId_ = 0;
+        
         protected void HandleNameSettedMessage (VariantMap &eventData)
         {
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
@@ -21,6 +24,13 @@ namespace Ingame
             stateUi.AddChatMessage (messageData.ReadString () + ": " + messageData.ReadString ());
         }
         
+        protected void HandlePlayerSpawned (VariantMap &eventData)
+        {
+            VectorBuffer messageData = eventData ["Data"].GetBuffer ();
+            playerExpectedId_ = messageData.ReadUInt ();
+            waitingForSpawnSync_ = true;
+        }
+        
         NetworkHandler ()
         {
             
@@ -29,6 +39,19 @@ namespace Ingame
         ~NetworkHandler ()
         {
             
+        }
+        
+        void Update (float timeStep)
+        {
+            if (waitingForSpawnSync_)
+            {
+                localSceneManager.playerNodeId = playerExpectedId_;
+                if (localSceneManager.playerNodeId == playerExpectedId_)
+                {
+                    waitingForSpawnSync_ = false;
+                    stateUi.isSpawned_ = true;
+                }
+            }
         }
         
         void SendNickname ()
@@ -65,6 +88,8 @@ namespace Ingame
                 HandleTimeUntilSpawnReturned (eventData);
             else if (eventData ["MessageID"] == NMID_STC_CHAT_MESSAGE)
                 HandleChatMessage (eventData);
+            else if (eventData ["MessageID"] == NMID_STC_PLAYER_SPAWNED)
+                HandlePlayerSpawned (eventData);
         }
     };
 }

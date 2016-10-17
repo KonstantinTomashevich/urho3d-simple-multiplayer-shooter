@@ -51,7 +51,7 @@ const Urho3D::String OBSTACLE_LOCAL_PREFAB ("Objects/obstacle_local.xml");
 const Urho3D::String PLAYER_LOCAL_PREFAB ("Objects/player_local.xml");
 const Urho3D::String SHELL_LOCAL_PREFAB ("Objects/shell_local.xml");
 
-const Urho3D::Vector3 PLAYER_LOCAL_OFFSET (0, 0.5f, 0);
+const Urho3D::Vector3 PLAYER_LOCAL_OFFSET (0, 0, 0);
 const Urho3D::Vector3 SHELL_LOCAL_OFFSET (0, 0, 0);
 }
 
