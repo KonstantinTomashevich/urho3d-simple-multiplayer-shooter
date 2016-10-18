@@ -13,7 +13,8 @@
 #include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Viewport.h>
 
-ServerCameraManager::ServerCameraManager (Urho3D::Context *context) : Urho3D::Object (context)
+ServerCameraManager::ServerCameraManager (Urho3D::Context *context) :
+    Urho3D::Object (context)
 {
 
 }

@@ -4,7 +4,8 @@
 #include <Shared/Constants.hpp>
 URHO3D_DEFINE_APPLICATION_MAIN (Generator)
 
-Generator::Generator (Urho3D::Context *context) : Urho3D::Application (context)
+Generator::Generator (Urho3D::Context *context) :
+    Urho3D::Application (context)
 {
 
 }

@@ -9,7 +9,9 @@
 #include <Urho3D/Resource/XMLElement.h>
 #include <Shared/Constants.hpp>
 
-Spawner::Spawner (Urho3D::Context *context) : Urho3D::Object (context), scene_ (0)
+Spawner::Spawner (Urho3D::Context *context) :
+    Urho3D::Object (context),
+    scene_ (0)
 {
 
 }

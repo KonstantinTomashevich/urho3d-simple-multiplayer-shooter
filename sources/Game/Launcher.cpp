@@ -5,7 +5,9 @@
 #include <Shared/Constants.hpp>
 URHO3D_DEFINE_APPLICATION_MAIN (Launcher)
 
-Launcher::Launcher (Urho3D::Context *context) : Urho3D::Application (context), scriptMain_ (0)
+Launcher::Launcher (Urho3D::Context *context) :
+    Urho3D::Application (context),
+    scriptMain_ (0)
 {
 
 }

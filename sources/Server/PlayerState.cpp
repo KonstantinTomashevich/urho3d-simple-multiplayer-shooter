@@ -3,22 +3,19 @@
 #include "PlayersManager.hpp"
 #include <Shared/Constants.hpp>
 
-PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connection)
+PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connection) :
+    manager_ (manager),
+    connection_ (connection),
+    timeFromLastFire_ (GameplayConstants::FIRE_COOLDOWN_TIME),
+    name_ (Urho3D::String::EMPTY),
+    timeBeforeAutomaticNaming_ (ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING),
+    node_ (0),
+    timeBeforeSpawn_ (GameplayConstants::RESPAWN_TIME),
+    deaths_ (0),
+    kills_ (0)
 {
     assert (manager);
     assert (connection);
-    manager_ = manager;
-    connection_ = connection;
-    timeFromLastFire_ = GameplayConstants::FIRE_COOLDOWN_TIME;
-
-    name_ = Urho3D::String::EMPTY;
-    timeBeforeAutomaticNaming_ = ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING;
-
-    node_ = 0;
-    timeBeforeSpawn_ = GameplayConstants::RESPAWN_TIME;
-
-    deaths_ = 0;
-    kills_ = 0;
 }
 
 PlayerState::~PlayerState ()
@@ -116,6 +113,17 @@ void PlayerState::SetNode (Urho3D::Node *node)
     assert (!node_);
     assert (node);
     node_ = node;
+}
+
+Urho3D::Vector2 PlayerState::GetNormalizedMoveRequest ()
+{
+    return normalizedMoveRequest_;
+}
+
+void PlayerState::SetNormalizedMoveRequest (Urho3D::Vector2 normalizedMoveRequest)
+{
+    assert (normalizedMoveRequest.Length () <= sqrtf (2));
+    normalizedMoveRequest_ = normalizedMoveRequest;
 }
 
 int PlayerState::GetKills ()

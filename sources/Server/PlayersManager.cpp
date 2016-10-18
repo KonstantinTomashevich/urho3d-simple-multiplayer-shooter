@@ -64,7 +64,10 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
     playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
 }
 
-PlayersManager::PlayersManager (Urho3D::Context *context) : Urho3D::Object (context), players_ (), scene_ (0)
+PlayersManager::PlayersManager (Urho3D::Context *context) :
+    Urho3D::Object (context),
+    players_ (),
+    scene_ (0)
 {
 
 }

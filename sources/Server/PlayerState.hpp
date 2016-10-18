@@ -16,6 +16,7 @@ protected:
 
     Urho3D::Node *node_;
     float timeBeforeSpawn_;
+    Urho3D::Vector2 normalizedMoveRequest_;
 
     int deaths_;
     int kills_;
@@ -35,6 +36,9 @@ public:
 
     Urho3D::Node *GetNode ();
     void SetNode (Urho3D::Node *node);
+
+    Urho3D::Vector2 GetNormalizedMoveRequest ();
+    void SetNormalizedMoveRequest (Urho3D::Vector2 normalizedMoveRequest);
 
     int GetKills ();
     void IncrementKills ();

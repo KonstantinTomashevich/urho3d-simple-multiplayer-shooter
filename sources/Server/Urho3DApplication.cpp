@@ -14,7 +14,10 @@
 URHO3D_DEFINE_APPLICATION_MAIN (Urho3DApplication)
 
 Urho3DApplication::Urho3DApplication (Urho3D::Context *context) : Urho3D::Application (context),
-    scene_ (0), cameraManager_ (0), playersManager_ (0), spawner_ (0)
+    scene_ (0),
+    cameraManager_ (0),
+    playersManager_ (0),
+    spawner_ (0)
 {
 
 }
