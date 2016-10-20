@@ -11,6 +11,7 @@
 
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/Physics/CollisionShape.h>
+#include <Urho3D/IO/Log.h>
 #include <Shared/Constants.hpp>
 
 Spawner::Spawner (Urho3D::Context *context) :
@@ -47,6 +48,7 @@ void Spawner::GenerateServerScene ()
     AddStandartLight ();
     AddStandartZone ();
     AddStandartTerrain ();
+    AddStandartTerrainBorders ();
     GenerateObstacles (Urho3D::Random (
                            ServerConstants::MINIMUM_OBSTACLES_COUNT, ServerConstants::MAXIMUM_OBSTACLES_COUNT));
 }
@@ -73,13 +75,29 @@ void Spawner::AddStandartZone ()
 
 void Spawner::AddStandartTerrain ()
 {
-    // TODO: Add borders in prefab.
     Urho3D::Node *terrainNode = scene_->CreateChild ("terrain", Urho3D::REPLICATED);
     terrainNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_TERRAIN);
 
     Urho3D::Node *terrainLocal = terrainNode->CreateChild ("local", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
     terrainLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::TERRAIN_LOCAL_PREFAB)->GetRoot ());
+}
+
+void Spawner::AddStandartTerrainBorders ()
+{
+    for (float x = -52.5f; x <= 52.5f; x += 5.0f)
+    {
+        if (x == -52.5f || x == 52.5f)
+        {
+            for (float z = -52.5f; z <= 52.5f; z += 5)
+                AddStandartObstacle (Urho3D::Vector3 (x, 2.5f, z), Urho3D::Quaternion ());
+        }
+        else
+        {
+            AddStandartObstacle (Urho3D::Vector3 (x, 2.5f, -52.5f), Urho3D::Quaternion ());
+            AddStandartObstacle (Urho3D::Vector3 (x, 2.5f, 52.5f), Urho3D::Quaternion ());
+        }
+    }
 }
 
 float Spawner::GetMinimumDistanceBetween (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others)
