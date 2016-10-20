@@ -191,6 +191,8 @@ namespace LogInToServer
             connectButton_.visible = visible;
         }
         
+        // TODO: Maybe use get_* instead of Get*?
+        
         String GetAdress ()
         {
             return adressEdit_.text;

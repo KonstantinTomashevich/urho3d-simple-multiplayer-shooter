@@ -56,6 +56,20 @@ namespace LogInToServer
         // *** UI events handling functions
         protected void HandleConnectButtonClick (VariantMap &eventData)
         {
+            String nickname = stateUi.GetNickname ();
+            nickname.Replace ('!', '_');
+            nickname.Replace ('(', '_');
+            nickname.Replace (')', '_');
+            nickname.Replace ('[', '_');
+            nickname.Replace (']', '_');
+            nickname.Replace ('\\', '_');
+            nickname.Replace ('/', '_');
+            nickname.Replace ('{', '_');
+            nickname.Replace ('}', '_');
+            nickname.Replace ('*', '_');
+            nickname.Replace ('<', '_');
+            nickname.Replace ('>', '_');
+            
             SharedGlobals::syncedGameScene.RemoveAllChildren ();
             network.Connect (stateUi.GetAdress (), stateUi.GetPort (), SharedGlobals::syncedGameScene);
             isConnectingNow = true;
@@ -63,7 +77,7 @@ namespace LogInToServer
             
             SharedGlobals::lastAdress = stateUi.GetAdress ();
             SharedGlobals::lastPort = stateUi.GetPort ();
-            SharedGlobals::lastNickname = stateUi.GetNickname ();
+            SharedGlobals::lastNickname = nickname;
         }
         // ***
 

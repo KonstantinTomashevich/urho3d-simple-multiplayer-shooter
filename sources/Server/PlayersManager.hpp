@@ -14,6 +14,7 @@ protected:
     void ProcessGetTimeUntilSpawn (Urho3D::Connection *connection);
     void ProcessChatMessageRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
     void ProcessSetMoveRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
+    void SendServerMessage (Urho3D::String message);
 public:
     PlayersManager (Urho3D::Context *context);
     virtual ~PlayersManager ();

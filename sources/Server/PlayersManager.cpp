@@ -77,6 +77,18 @@ void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho
     playerState->SetNormalizedMoveRequest (moveRequest);
 }
 
+void PlayersManager::SendServerMessage (Urho3D::String message)
+{
+    Urho3D::VectorBuffer messageData;
+    messageData.WriteString (message);
+    for (int index = 0; index < players_.Values ().Size (); index++)
+    {
+        PlayerState *player = players_.Values ().At (index);
+        if (player)
+            player->GetConnection ()->SendMessage (NetworkMessageIds::STC_SERVER_MESSAGE, true, false, messageData);
+    }
+}
+
 PlayersManager::PlayersManager (Urho3D::Context *context) :
     Urho3D::Object (context),
     players_ (),
@@ -150,6 +162,7 @@ void PlayersManager::RequestRespawn (PlayerState *requester)
     Urho3D::VectorBuffer messageData;
     messageData.WriteUInt (id);
     requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_SPAWNED, true, false, messageData);
+    SendServerMessage (requester->GetName () + " respawned!");
 }
 
 void PlayersManager::OnClientConnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -167,6 +180,7 @@ void PlayersManager::OnClientDisconnected (Urho3D::StringHash eventType, Urho3D:
             (Urho3D::Connection *) eventData [Urho3D::ClientDisconnected::P_CONNECTION].GetPtr ();
 
     PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
+    SendServerMessage (playerState->GetName () + " exited!");
     if (playerState->GetNode ())
         playerState->GetNode ()->Remove ();
 

@@ -21,7 +21,15 @@ namespace Ingame
         protected void HandleChatMessage (VariantMap &eventData)
         {
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
-            stateUi.AddChatMessage (messageData.ReadString () + ": " + messageData.ReadString ());
+            stateUi.AddChatMessage ("[" + messageData.ReadString () + "]" +
+                                     " : " + messageData.ReadString ());
+        }
+        
+        protected void HandleServerMessage (VariantMap &eventData)
+        {
+            VectorBuffer messageData = eventData ["Data"].GetBuffer ();
+            stateUi.AddChatMessage ("{Server}" +
+                                     " : " + messageData.ReadString ());
         }
         
         protected void HandlePlayerSpawned (VariantMap &eventData)
@@ -96,6 +104,8 @@ namespace Ingame
                 HandleTimeUntilSpawnReturned (eventData);
             else if (eventData ["MessageID"] == NMID_STC_CHAT_MESSAGE)
                 HandleChatMessage (eventData);
+            else if (eventData ["MessageID"] == NMID_STC_SERVER_MESSAGE)
+                HandleServerMessage (eventData);
             else if (eventData ["MessageID"] == NMID_STC_PLAYER_SPAWNED)
                 HandlePlayerSpawned (eventData);
         }
