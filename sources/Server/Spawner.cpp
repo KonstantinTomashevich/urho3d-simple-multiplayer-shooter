@@ -1,3 +1,4 @@
+#include "BuildConfiguration.hpp"
 #include "Spawner.hpp"
 #include <Urho3D/Graphics/Octree.h>
 #include <Urho3D/Graphics/Light.h>
@@ -7,6 +8,9 @@
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/Resource/XMLElement.h>
+
+#include <Urho3D/Physics/RigidBody.h>
+#include <Urho3D/Physics/CollisionShape.h>
 #include <Shared/Constants.hpp>
 
 Spawner::Spawner (Urho3D::Context *context) :
@@ -69,6 +73,7 @@ void Spawner::AddStandartZone ()
 
 void Spawner::AddStandartTerrain ()
 {
+    // TODO: Add borders in prefab.
     Urho3D::Node *terrainNode = scene_->CreateChild ("terrain", Urho3D::REPLICATED);
     terrainNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_TERRAIN);
 
@@ -127,7 +132,7 @@ unsigned Spawner::SpawnPlayer ()
     float minimumDistance;
     do
     {
-        position = Urho3D::Vector3 (Urho3D::Random (-50.0f, 50.0f), 2.5f, Urho3D::Random (-50.0f, 50.0f));
+        position = Urho3D::Vector3 (Urho3D::Random (-30.0f, 30.0f), 2.5f, Urho3D::Random (-30.0f, 30.0f));
         minimumDistance = GetMinimumDistanceBetween (position, placedObstacles_);
     }
     while (minimumDistance < ServerConstants::MINIMUM_DISTANCE_BETWEEN_OBSTACLES && minimumDistance > 0.0f);
@@ -140,6 +145,14 @@ unsigned Spawner::SpawnPlayer ()
     Urho3D::Node *playerLocal = playerNode->CreateChild ("local", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
     playerLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::PLAYER_LOCAL_PREFAB)->GetRoot ());
+
+    Urho3D::SharedPtr <Urho3D::RigidBody> body (playerLocal->GetComponent <Urho3D::RigidBody> ());
+    body->Remove ();
+    playerNode->AddComponent (body.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
+
+    Urho3D::SharedPtr <Urho3D::CollisionShape> shape (playerLocal->GetComponent <Urho3D::CollisionShape> ());
+    shape->Remove ();
+    playerNode->AddComponent (shape.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
     return playerNode->GetID ();
 }
 

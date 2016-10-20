@@ -31,6 +31,9 @@ const int HEALTH_REGENERATION = 3.0f;
 const int MAX_HEALTH = 100.0f;
 const int DEAD_PLAYERS_REMOVE_TIME = 10.0f;
 const float FIRE_COOLDOWN_TIME = 1.0f;
+
+const float MOVE_IMPULSE = 50.0f;
+const float ROTATION_IMPULSE = 3.5f;
 }
 
 namespace SerializationConstants
@@ -50,9 +53,6 @@ const Urho3D::String TERRAIN_LOCAL_PREFAB ("Objects/terrain_local.xml");
 const Urho3D::String OBSTACLE_LOCAL_PREFAB ("Objects/obstacle_local.xml");
 const Urho3D::String PLAYER_LOCAL_PREFAB ("Objects/player_local.xml");
 const Urho3D::String SHELL_LOCAL_PREFAB ("Objects/shell_local.xml");
-
-const Urho3D::Vector3 PLAYER_LOCAL_OFFSET (0, 0, 0);
-const Urho3D::Vector3 SHELL_LOCAL_OFFSET (0, 0, 0);
 }
 
 namespace NetworkMessageIds
@@ -63,18 +63,16 @@ enum NetworkMessageId
 
     STC_PLAYER_NAME_SETTED = 101, // Data: nameString
     STC_PLAYER_SPAWNED = 102, // Data: nodeId (unsigned)
-    STC_PLAYER_DIE = 103, // Data: nodeId (unsigned)
-    STC_CHAT_MESSAGE = 104, // Data: senderName (String), message (String)
-    STC_SERVER_MESSAGE = 105, // Data: message (String)
-    STC_RETURN_TIME_UNTIL_SPAWN = 106, // Data: time (float)
+    STC_CHAT_MESSAGE = 103, // Data: senderName (String), message (String)
+    STC_SERVER_MESSAGE = 104, // Data: message (String)
+    STC_RETURN_TIME_UNTIL_SPAWN = 105, // Data: time (float)
 
     // Client to server messages
 
     CTS_REQUEST_NAME = 201, // Data: nameString
-    CTS_SET_MOVE_VELOCITY_REQUEST = 202, // Data: moveVelocity (float)
-    CTS_SET_ROTATION_VELOCITY_REQUEST = 203, // Data: rotationVelocity (float)
-    CTS_REQUEST_FIRE = 204, // Data: none
-    CTS_REQUEST_CHAT_MESSAGE = 205, // Data: message (String)
-    CTS_GET_TIME_UNTIL_SPAWN = 206 // Data: empty
+    CTS_SET_MOVE_REQUEST = 202, // Data: normalizedMoveRequest (Vector2)
+    CTS_REQUEST_FIRE = 203, // Data: none
+    CTS_REQUEST_CHAT_MESSAGE = 204, // Data: message (String)
+    CTS_GET_TIME_UNTIL_SPAWN = 205 // Data: empty
 };
 }

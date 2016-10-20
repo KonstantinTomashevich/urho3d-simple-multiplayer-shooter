@@ -1,8 +1,8 @@
 namespace Ingame
 {
     // *** Ids for ui buttons
-    int UNKNOWN_BUTTON = -1;
-    int SEND_MESSAGE_BUTTON = 0;
+    const int UNKNOWN_BUTTON = -1;
+    const int SEND_MESSAGE_BUTTON = 0;
     // ***
     
     class StateUi
@@ -105,7 +105,7 @@ namespace Ingame
             infoText_.text = info;
             
             if (!isSpawned_)
-                networkHandler.GetTimeUntilSpawn ();
+                networkHandler.RequestTimeUntilSpawnFromServer ();
                 
             
             if (chatHistory_.length == 0)

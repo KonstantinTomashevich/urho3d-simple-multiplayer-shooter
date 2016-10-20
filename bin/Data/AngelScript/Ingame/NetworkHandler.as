@@ -73,11 +73,19 @@ namespace Ingame
             network.serverConnection.SendMessage (NMID_CTS_REQUEST_CHAT_MESSAGE, true, false, messageData);
         }
         
-        void GetTimeUntilSpawn ()
+        void RequestTimeUntilSpawnFromServer ()
         {
             VectorBuffer messageData = VectorBuffer ();
             if (network.serverConnection !is null)
                 network.serverConnection.SendMessage (NMID_CTS_GET_TIME_UNTIL_SPAWN, true, false, messageData);
+        }
+        
+        void SendMoveRequest (Vector2 request)
+        {
+            VectorBuffer messageData = VectorBuffer ();
+            messageData.WriteVector2 (request);
+            if (network.serverConnection !is null)
+                network.serverConnection.SendMessage (NMID_CTS_SET_MOVE_REQUEST, true, false, messageData);
         }
         
         void HandleEvent (StringHash eventType, VariantMap &eventData)

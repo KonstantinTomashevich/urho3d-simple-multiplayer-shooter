@@ -2,6 +2,8 @@
 #include "PlayerState.hpp"
 #include "PlayersManager.hpp"
 #include <Shared/Constants.hpp>
+#include <Urho3D/Physics/RigidBody.h>
+#include <Urho3D/IO/Log.h>
 
 PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connection) :
     manager_ (manager),
@@ -60,9 +62,16 @@ void PlayerState::Update (float timeStep)
                     health = 100.0f;
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
-                node_->SetPosition (
-                            node_->GetChild ("local")->GetWorldPosition () - SceneConstants::PLAYER_LOCAL_OFFSET);
-                node_->GetChild ("local")->SetPosition (SceneConstants::PLAYER_LOCAL_OFFSET);
+                Urho3D::RigidBody *physicsBody = node_->GetComponent <Urho3D::RigidBody> ();
+                physicsBody->SetLinearVelocity (
+                            physicsBody->GetLinearVelocity () * Urho3D::Vector3 (0, 1, 0));
+                physicsBody->SetAngularVelocity (Urho3D::Vector3 (0, 0, 0));
+
+                physicsBody->ApplyImpulse (
+                            node_->GetWorldDirection () * GameplayConstants::MOVE_IMPULSE * normalizedMoveRequest_.x_);
+
+                physicsBody->ApplyTorqueImpulse (
+                            Urho3D::Vector3::UP * GameplayConstants::ROTATION_IMPULSE * normalizedMoveRequest_.y_);
 
                 if (timeFromLastFire_ <= GameplayConstants::FIRE_COOLDOWN_TIME)
                     timeFromLastFire_ += timeStep;

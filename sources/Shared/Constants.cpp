@@ -55,6 +55,9 @@ GETTER (int, HEALTH_REGENERATION)
 GETTER (int, MAX_HEALTH)
 GETTER (int, DEAD_PLAYERS_REMOVE_TIME)
 GETTER (float, FIRE_COOLDOWN_TIME)
+
+GETTER (float, MOVE_IMPULSE)
+GETTER (float, ROTATION_IMPULSE)
 }
 
 namespace SerializationConstants
@@ -74,9 +77,6 @@ GETTER (Urho3D::String, TERRAIN_LOCAL_PREFAB)
 GETTER (Urho3D::String, OBSTACLE_LOCAL_PREFAB)
 GETTER (Urho3D::String, PLAYER_LOCAL_PREFAB)
 GETTER (Urho3D::String, SHELL_LOCAL_PREFAB)
-
-GETTER (Urho3D::Vector3, PLAYER_LOCAL_OFFSET)
-GETTER (Urho3D::Vector3, SHELL_LOCAL_OFFSET)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
@@ -105,6 +105,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, GameplayConstants, DEAD_PLAYERS_REMOVE_TIME);
     BIND_CONSTANT (engine, float, GameplayConstants, FIRE_COOLDOWN_TIME);
 
+    BIND_CONSTANT (engine, float, GameplayConstants, MOVE_IMPULSE);
+    BIND_CONSTANT (engine, float, GameplayConstants, ROTATION_IMPULSE);
+
     BIND_CONSTANT (engine, StringHash, SerializationConstants, HEALTH_VAR_HASH);
     BIND_CONSTANT (engine, StringHash, SerializationConstants, OBJECT_TYPE_VAR_HASH);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_WITHOUT_LOCALS);
@@ -118,20 +121,15 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, String, SceneConstants, PLAYER_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, SHELL_LOCAL_PREFAB);
 
-    BIND_CONSTANT (engine, Vector3, SceneConstants, PLAYER_LOCAL_OFFSET);
-    BIND_CONSTANT (engine, Vector3, SceneConstants, SHELL_LOCAL_OFFSET);
-
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_SPAWNED", NetworkMessageIds::STC_PLAYER_SPAWNED);
-    engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_DIE", NetworkMessageIds::STC_PLAYER_DIE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_CHAT_MESSAGE", NetworkMessageIds::STC_CHAT_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_SERVER_MESSAGE", NetworkMessageIds::STC_SERVER_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_RETURN_TIME_UNTIL_SPAWN", NetworkMessageIds::STC_RETURN_TIME_UNTIL_SPAWN);
 
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_NAME", NetworkMessageIds::CTS_REQUEST_NAME);
-    engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_SET_MOVE_VELOCITY_REQUEST", NetworkMessageIds::CTS_SET_MOVE_VELOCITY_REQUEST);
-    engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_SET_ROTATION_VELOCITY_REQUEST", NetworkMessageIds::CTS_SET_ROTATION_VELOCITY_REQUEST);
+    engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_SET_MOVE_REQUEST", NetworkMessageIds::CTS_SET_MOVE_REQUEST);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_FIRE", NetworkMessageIds::CTS_REQUEST_FIRE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_CHAT_MESSAGE", NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_GET_TIME_UNTIL_SPAWN", NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN);

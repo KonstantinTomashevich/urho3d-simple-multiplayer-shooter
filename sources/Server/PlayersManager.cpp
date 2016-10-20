@@ -61,7 +61,15 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
     Urho3D::VectorBuffer messageData;
     messageData.WriteString (data.ReadString ());
     messageData.WriteString (playerState->GetName ());
+    // TODO: Fix this error. We will send message to ALL clients!!!
     playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
+}
+
+void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data)
+{
+    PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
+    Urho3D::Vector2 moveRequest = data.ReadVector2 ();
+    playerState->SetNormalizedMoveRequest (moveRequest);
 }
 
 PlayersManager::PlayersManager (Urho3D::Context *context) :
@@ -178,6 +186,9 @@ void PlayersManager::OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::Var
 
     else if (messageId == NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE)
         ProcessChatMessageRequest (connection, data);
+
+    else if (messageId == NetworkMessageIds::CTS_SET_MOVE_REQUEST)
+        ProcessSetMoveRequest (connection, data);
 
     // TODO: Implement all messages processing.
 }

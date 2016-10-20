@@ -1,8 +1,8 @@
 namespace LogInToServer
 {
     // *** Ids for ui buttons
-    int CONNECT_BUTTON = 0;
-    int UNKNOWN_BUTTON = -1;
+    const int CONNECT_BUTTON = 0;
+    const int UNKNOWN_BUTTON = -1;
     // ***
     
     class StateUi
