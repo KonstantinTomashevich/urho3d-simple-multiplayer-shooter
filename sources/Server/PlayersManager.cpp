@@ -61,8 +61,13 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
     Urho3D::VectorBuffer messageData;
     messageData.WriteString (data.ReadString ());
     messageData.WriteString (playerState->GetName ());
-    // TODO: Fix this error. We will send message to ALL clients!!!
-    playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
+
+    for (int index = 0; index < players_.Values ().Size (); index++)
+    {
+        PlayerState *player = players_.Values ().At (index);
+        if (player)
+            player->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
+    }
 }
 
 void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data)
@@ -152,7 +157,6 @@ void PlayersManager::OnClientConnected (Urho3D::StringHash eventType, Urho3D::Va
     Urho3D::Connection *connection =
             (Urho3D::Connection *) eventData [Urho3D::ClientConnected::P_CONNECTION].GetPtr ();
 
-    Urho3D::Log::Write (Urho3D::LOG_INFO, "New player connected. It's adress is " + connection->ToString () + ".");
     players_ [Urho3D::StringHash (connection->ToString ())] = new PlayerState (this, connection);
     connection->SetScene (scene_);
 }
