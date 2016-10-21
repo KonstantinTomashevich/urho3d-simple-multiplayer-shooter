@@ -191,19 +191,17 @@ namespace LogInToServer
             connectButton_.visible = visible;
         }
         
-        // TODO: Maybe use get_* instead of Get*?
-        
-        String GetAdress ()
+        String get_adress ()
         {
             return adressEdit_.text;
         }
         
-        int GetPort ()
+        int get_port ()
         {
             return portEdit_.text.ToInt ();
         }
         
-        String GetNickname ()
+        String get_nickname ()
         {
             return nicknameEdit_.text;
         }

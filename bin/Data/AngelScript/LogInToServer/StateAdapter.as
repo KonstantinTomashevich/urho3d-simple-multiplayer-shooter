@@ -56,7 +56,7 @@ namespace LogInToServer
         // *** UI events handling functions
         protected void HandleConnectButtonClick (VariantMap &eventData)
         {
-            String nickname = stateUi.GetNickname ();
+            String nickname = stateUi.nickname;
             nickname.Replace ('!', '_');
             nickname.Replace ('(', '_');
             nickname.Replace (')', '_');
@@ -71,12 +71,12 @@ namespace LogInToServer
             nickname.Replace ('>', '_');
             
             SharedGlobals::syncedGameScene.RemoveAllChildren ();
-            network.Connect (stateUi.GetAdress (), stateUi.GetPort (), SharedGlobals::syncedGameScene);
+            network.Connect (stateUi.adress, stateUi.port, SharedGlobals::syncedGameScene);
             isConnectingNow = true;
             stateUi.SetConnectionSetupFieldsVisible (false);
             
-            SharedGlobals::lastAdress = stateUi.GetAdress ();
-            SharedGlobals::lastPort = stateUi.GetPort ();
+            SharedGlobals::lastAdress = stateUi.adress;
+            SharedGlobals::lastPort = stateUi.port;
             SharedGlobals::lastNickname = nickname;
         }
         // ***
@@ -84,8 +84,8 @@ namespace LogInToServer
         // *** Network events handling functions
         void HandleConnectFailed (VariantMap &eventData)
         {
-            ErrorDialog ("Connect failed!", "Connection to " + stateUi.GetAdress () + ":" + 
-                         stateUi.GetPort () + " failed!");
+            ErrorDialog ("Connect failed!", "Connection to " + stateUi.adress + ":" + 
+                         stateUi.port + " failed!");
             engine.Exit ();
         }
         
@@ -96,8 +96,8 @@ namespace LogInToServer
         
         void HandleSceneLoadingError (VariantMap &eventData)
         {
-            ErrorDialog ("Error loading scene!", "Connection to " + stateUi.GetAdress () + ":" +
-                          stateUi.GetPort () + " failed!\n" + "Can't load server scene!");
+            ErrorDialog ("Error loading scene!", "Connection to " + stateUi.adress + ":" +
+                          stateUi.port + " failed!\n" + "Can't load server scene!");
             engine.Exit ();
         }
         // ***
