@@ -5,6 +5,10 @@ namespace Ingame
     const int SEND_MESSAGE_BUTTON = 0;
     // ***
     
+    // *** Ui constants
+    int OTHER_PLAYERS_LABELS_POOL_SIZE = 20;
+    // ***
+    
     class StateUi
     {
         // *** Protected variables
@@ -16,6 +20,7 @@ namespace Ingame
         protected Text @chatHistoryUI_;
         protected Button @sendMessageButton_;
         protected Text @sendMessageButtonText_;
+        protected Array <Text @> otherPlayersLabels_;
         // ***
         
         // *** Public variables
@@ -64,12 +69,22 @@ namespace Ingame
             sendMessageButtonText_.text = "Send";
             sendMessageButtonText_.SetStyleAuto (styles_);
             sendMessageButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
+            
+            for (int index = 0; index < OTHER_PLAYERS_LABELS_POOL_SIZE; index++)
+            {
+                Text @label = rootElement_.CreateChild ("Text", "other_player_label_" + index);
+                label.text = "...";
+                label.SetStyleAuto (styles_);
+                label.color = Color (0.3f, 0.8f, 0.3f);
+                otherPlayersLabels_.Push (label);
+            }
         }
         // ***
         
         // *** Calculate and set ui elements positions and sizes
         void Resize (int width, int height)
         {
+            // TODO: Maybe add Floor's?
             float aspectRatio = 1.0f * width / height;
             infoText_.SetPosition (height * 0.03f, height * 0.03f);
             infoText_.fontSize = height * 0.05f;
@@ -99,7 +114,8 @@ namespace Ingame
             
             String info = nickname_ + "\n";
             if (isSpawned_)
-                info += Floor (localSceneManager.playerLives) + "/100 HP.";
+                info += Floor (localSceneManager.playerLives) + "/" +
+                GameplayConstants__MAX_HEALTH + " HP.";
             else
                 info += Floor (timeUntilSpawn_) + "s until respawn.";
             infoText_.text = info;
@@ -118,7 +134,47 @@ namespace Ingame
                 for (int index = 0; index < chatHistory_.length; index++)
                     chatHistoryUI_.text = chatHistoryUI_.text + "\n" + chatHistory_ [index];
             }
-
+            
+            Array <Node @> otherPlayersNodes = localSceneManager.otherPlayersNodes;
+            Node @cameraNode = localSceneManager.cameraNode;
+            Camera @camera = cameraNode.GetComponent ("Camera");
+                    
+            for (int index = 0; index < otherPlayersLabels_.length; index++)
+            {
+                Text @label = otherPlayersLabels_ [index];
+                if (index < otherPlayersNodes.length)
+                {
+                    Node @otherPlayerNode = otherPlayersNodes [index];
+                    String labelText = 
+                        otherPlayerNode.vars [SerializationConstants__NAME_VAR_HASH].
+                            GetString () + "\n";
+                    labelText += 
+                        Floor (otherPlayerNode.vars [SerializationConstants__HEALTH_VAR_HASH].
+                               GetFloat ()) + "/" + GameplayConstants__MAX_HEALTH + " HP.";
+                        
+                    label.text = labelText;
+                    label.visible = true;
+                    
+                    float distance = (cameraNode.position - otherPlayerNode.position).length;
+                    Vector2 labelPosition = 
+                        camera.WorldToScreenPoint (otherPlayerNode.position + Vector3 (0, 1.5f, 0));
+                        
+                    if (distance > 7.0f)
+                    {
+                        label.fontSize = Floor (graphics.height * 0.04f * 7.0f / distance);
+                        labelPosition.x -= Floor (0.08f * 7.0f / distance);
+                    }
+                    else
+                    {
+                        label.fontSize = Floor (graphics.height * 0.04f);
+                        labelPosition.x -= Floor (0.08f * 7.0f);
+                    }
+                    label.SetPosition (graphics.width * labelPosition.x,
+                                       graphics.height * labelPosition.y);
+                }
+                else
+                    label.visible = false;
+            }
         }
         // ***
         

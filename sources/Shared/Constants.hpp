@@ -39,7 +39,9 @@ const float ROTATION_IMPULSE = 3.5f;
 namespace SerializationConstants
 {
 const Urho3D::StringHash HEALTH_VAR_HASH ("Health");
+const Urho3D::StringHash NAME_VAR_HASH ("Name");
 const Urho3D::StringHash OBJECT_TYPE_VAR_HASH ("ObjectType");
+
 const int OBJECT_TYPE_WITHOUT_LOCALS = -1;
 const int OBJECT_TYPE_TERRAIN = 0;
 const int OBJECT_TYPE_OBSTACLE = 1;

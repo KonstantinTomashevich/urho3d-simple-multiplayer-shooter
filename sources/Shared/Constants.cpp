@@ -63,7 +63,9 @@ GETTER (float, ROTATION_IMPULSE)
 namespace SerializationConstants
 {
 GETTER (Urho3D::StringHash, HEALTH_VAR_HASH)
+GETTER (Urho3D::StringHash, NAME_VAR_HASH)
 GETTER (Urho3D::StringHash, OBJECT_TYPE_VAR_HASH)
+
 GETTER (int, OBJECT_TYPE_WITHOUT_LOCALS)
 GETTER (int, OBJECT_TYPE_TERRAIN)
 GETTER (int, OBJECT_TYPE_OBSTACLE)
@@ -109,7 +111,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, float, GameplayConstants, ROTATION_IMPULSE);
 
     BIND_CONSTANT (engine, StringHash, SerializationConstants, HEALTH_VAR_HASH);
+    BIND_CONSTANT (engine, StringHash, SerializationConstants, NAME_VAR_HASH);
     BIND_CONSTANT (engine, StringHash, SerializationConstants, OBJECT_TYPE_VAR_HASH);
+
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_WITHOUT_LOCALS);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_TERRAIN);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_OBSTACLE);

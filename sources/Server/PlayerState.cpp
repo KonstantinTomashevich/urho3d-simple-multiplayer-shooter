@@ -44,6 +44,7 @@ void PlayerState::Update (float timeStep)
             {
                 manager_->RequestRespawn (this);
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::MAX_HEALTH);
+                node_->SetVar (SerializationConstants::NAME_VAR_HASH, Urho3D::Variant (name_));
             }
         }
         else

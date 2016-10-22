@@ -4,6 +4,7 @@ namespace Ingame
     {
         protected Node @cameraNode_;
         protected Node @playerNode_;
+        protected Array <Node @> otherPlayersNodes_;
         
         protected void CreateLocals ()
         {
@@ -60,7 +61,8 @@ namespace Ingame
         {
             cameraNode_ = SharedGlobals::syncedGameScene.CreateChild ("camera", LOCAL);
             cameraNode_.CreateComponent ("SoundListener", LOCAL);
-            cameraNode_.CreateComponent ("Camera", LOCAL);
+            Camera @camera = cameraNode_.CreateComponent ("Camera", LOCAL);
+            camera.farClip = 75.0f;
         };
         
         protected void CreateZone ()
@@ -75,6 +77,43 @@ namespace Ingame
         {
             Viewport @viewport = Viewport (SharedGlobals::syncedGameScene, cameraNode_.GetComponent ("Camera"));
             renderer.viewports [0] = viewport;
+        }
+        
+        protected void ScanForOtherPlayers ()
+        {
+            otherPlayersNodes_.Clear ();
+            Array <Node @> nodes = SharedGlobals::syncedGameScene.GetChildren (true);
+            
+            for (int index = 0; index < nodes.length; index++)
+            {
+                Node @otherPlayerNode = nodes [index];
+                // Is it node of any player? Isn't it node of our player?
+                if (otherPlayerNode.id < FIRST_LOCAL_ID and 
+                    otherPlayerNode.vars [SerializationConstants__OBJECT_TYPE_VAR_HASH].GetInt () == 
+                    SerializationConstants__OBJECT_TYPE_PLAYER and
+                    otherPlayerNode !is playerNode_)
+                {
+                    Camera @camera = cameraNode_.GetComponent ("Camera");
+                    // It's not too far?
+                    if ((otherPlayerNode.position - cameraNode_.position).length < camera.farClip)
+                    {
+                        Vector2 screenPosition = camera.WorldToScreenPoint (otherPlayerNode.position);
+                        // Is it inside screen?
+                        if (screenPosition.x > 0.0f and screenPosition.x < 1.0f and
+                            screenPosition.y > 0.0f and screenPosition.y < 1.0f)
+                        {
+                            Octree @octree = SharedGlobals::syncedGameScene.GetComponent ("Octree");
+                            Ray ray = camera.GetScreenRay (screenPosition.x, screenPosition.y);
+                            RayQueryResult result = octree.RaycastSingle (ray, RAY_TRIANGLE,
+                                                                          camera.farClip,
+                                                                          DRAWABLE_GEOMETRY);
+                            // Is other player visible?
+                            if (result.node.parent.parent is otherPlayerNode)
+                                otherPlayersNodes_.Push (otherPlayerNode);
+                        }
+                    }
+                }
+            }
         }
         
         LocalSceneManager ()
@@ -102,6 +141,7 @@ namespace Ingame
         {           
             // Creates locals for new objects (old have "local" child and will not be affected).
             CreateLocals ();
+            ScanForOtherPlayers ();
             
             if (playerNode_ !is null)
             {
@@ -154,6 +194,16 @@ namespace Ingame
                 return playerNode_.vars [SerializationConstants__HEALTH_VAR_HASH].GetFloat ();
             else
                 return -1;
+        }
+        
+        Node @get_cameraNode ()
+        {
+            return cameraNode_;
+        }
+        
+        Array <Node @> get_otherPlayersNodes ()
+        {
+            return otherPlayersNodes_;
         }
     };
 }
