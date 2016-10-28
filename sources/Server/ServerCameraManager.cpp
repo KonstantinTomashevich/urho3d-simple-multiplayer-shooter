@@ -4,6 +4,7 @@
 
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Core/CoreEvents.h>
+#include <Urho3D/Core/Context.h>
 
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
@@ -24,11 +25,11 @@ ServerCameraManager::~ServerCameraManager ()
     Reset ();
 }
 
-void ServerCameraManager::Setup (Urho3D::Scene *scene)
+void ServerCameraManager::Setup ()
 {
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
     assert (scene);
-    scene_ = scene;
-    camera_ = scene_->CreateChild ("server_local_camera", Urho3D::LOCAL);
+    camera_ = scene->CreateChild ("server_local_camera", Urho3D::LOCAL);
     camera_->SetPosition (Urho3D::Vector3 (0, 50, 0));
     camera_->SetRotation (Urho3D::Quaternion (90, 0, 0));
 
@@ -38,12 +39,12 @@ void ServerCameraManager::Setup (Urho3D::Scene *scene)
 
     Urho3D::Renderer *renderer = GetSubsystem <Urho3D::Renderer> ();
     Urho3D::SharedPtr <Urho3D::Viewport> viewport (
-                new Urho3D::Viewport (context_, scene_, cameraComponent));
+                new Urho3D::Viewport (context_, scene, cameraComponent));
     renderer->SetViewport (0, viewport);
     renderer->SetShadowMapSize (1024);
 
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
-    Urho3D::Node *zoneNode = scene_->CreateChild ("zone", Urho3D::LOCAL);
+    Urho3D::Node *zoneNode = scene->CreateChild ("zone", Urho3D::LOCAL);
     zoneNode->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> ("Objects/zone_for_server.xml")->GetRoot ());
     SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (ServerCameraManager, Update));
 }
@@ -83,7 +84,6 @@ void ServerCameraManager::Update (Urho3D::StringHash eventType, Urho3D::VariantM
 
 void ServerCameraManager::Reset ()
 {
-    scene_ = 0;
     camera_ = 0;
     UnsubscribeFromAllEvents ();
 }

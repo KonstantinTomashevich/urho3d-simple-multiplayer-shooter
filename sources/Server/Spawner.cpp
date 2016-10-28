@@ -12,11 +12,11 @@
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/Physics/CollisionShape.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Core/Context.h>
 #include <Shared/Constants.hpp>
 
 Spawner::Spawner (Urho3D::Context *context) :
-    Urho3D::Object (context),
-    scene_ (0)
+    Urho3D::Object (context)
 {
     SubscribeToEvent (Urho3D::StringHash ("Explossion"), URHO3D_HANDLER (Spawner, OnExplossion));
 }
@@ -26,16 +26,6 @@ Spawner::~Spawner ()
 
 }
 
-void Spawner::SetScene (Urho3D::Scene *scene)
-{
-    scene_ = scene;
-}
-
-Urho3D::Scene *Spawner::GetScene ()
-{
-    return scene_;
-}
-
 Urho3D::PODVector <Urho3D::Vector3> *Spawner::GetPlacedObstaclesVectorPointer()
 {
     return &placedObstacles_;
@@ -43,8 +33,10 @@ Urho3D::PODVector <Urho3D::Vector3> *Spawner::GetPlacedObstaclesVectorPointer()
 
 void Spawner::GenerateServerScene ()
 {
-    scene_->CreateComponent <Urho3D::Octree> ();
-    scene_->CreateComponent <Urho3D::PhysicsWorld> ();
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    scene->CreateComponent <Urho3D::Octree> ();
+    scene->CreateComponent <Urho3D::PhysicsWorld> ();
     AddStandartLight ();
     AddStandartZone ();
     AddStandartTerrain ();
@@ -55,7 +47,9 @@ void Spawner::GenerateServerScene ()
 
 void Spawner::AddStandartLight ()
 {
-    Urho3D::Node *lightNode = scene_->CreateChild ("light", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *lightNode = scene->CreateChild ("light", Urho3D::REPLICATED);
     lightNode->SetRotation (Urho3D::Quaternion (45.0f, 25.0f, 0.0f));
     lightNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_WITHOUT_LOCALS);
 
@@ -68,14 +62,18 @@ void Spawner::AddStandartLight ()
 
 void Spawner::AddStandartZone ()
 {
-    Urho3D::Node *zoneNode = scene_->CreateChild ("zone", Urho3D::LOCAL);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *zoneNode = scene->CreateChild ("zone", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
     zoneNode->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> ("Objects/zone_for_server.xml")->GetRoot ());
 }
 
 void Spawner::AddStandartTerrain ()
 {
-    Urho3D::Node *terrainNode = scene_->CreateChild ("terrain", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *terrainNode = scene->CreateChild ("terrain", Urho3D::REPLICATED);
     terrainNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_TERRAIN);
 
     Urho3D::Node *terrainLocal = terrainNode->CreateChild ("local", Urho3D::LOCAL);
@@ -133,7 +131,9 @@ void Spawner::GenerateObstacles (int count)
 
 void Spawner::AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion rotation)
 {
-    Urho3D::Node *obstacleNode = scene_->CreateChild ("obstacle", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *obstacleNode = scene->CreateChild ("obstacle", Urho3D::REPLICATED);
     obstacleNode->SetPosition (position);
     obstacleNode->SetRotation (rotation);
     obstacleNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_OBSTACLE);
@@ -155,7 +155,9 @@ unsigned Spawner::SpawnPlayer ()
     }
     while (minimumDistance < ServerConstants::MINIMUM_DISTANCE_BETWEEN_OBSTACLES && minimumDistance > 0.0f);
 
-    Urho3D::Node *playerNode = scene_->CreateChild ("player", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *playerNode = scene->CreateChild ("player", Urho3D::REPLICATED);
     playerNode->SetPosition (position);
     playerNode->SetRotation (Urho3D::Quaternion (0, Urho3D::Random (360.0f), 0));
     playerNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_PLAYER);
@@ -176,7 +178,9 @@ unsigned Spawner::SpawnPlayer ()
 
 void Spawner::SpawnExplossion (Urho3D::Vector3 position)
 {
-    Urho3D::Node *explossionNode = scene_->CreateChild ("explossion", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *explossionNode = scene->CreateChild ("explossion", Urho3D::REPLICATED);
     explossionNode->SetPosition (position);
     explossionNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_EXPLOSSION);
 
@@ -193,7 +197,9 @@ void Spawner::OnExplossion (Urho3D::StringHash eventType, Urho3D::VariantMap &ev
 
 void Spawner::SpawnShell (PlayerState *player)
 {
-    Urho3D::Node *shellNode = scene_->CreateChild ("shell", Urho3D::REPLICATED);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *shellNode = scene->CreateChild ("shell", Urho3D::REPLICATED);
     shellNode->SetPosition (player->GetNode ()->LocalToWorld (Urho3D::Vector3::FORWARD * 1.5f));
     shellNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_SHELL);
     shellNode->SetVar (SerializationConstants::NAME_VAR_HASH, player->GetName ());

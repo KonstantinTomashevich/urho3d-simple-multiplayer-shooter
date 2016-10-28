@@ -54,19 +54,18 @@ void Urho3DApplication::Start ()
     spawner_ = new Spawner (context_);
     context_->RegisterSubsystem (spawner_);
 
-    // TODO: Maybe add scene to subsystems?
     scene_ = new Urho3D::Scene (context_);
-    spawner_->SetScene (scene_);
+    context_->RegisterSubsystem (scene_);
     spawner_->GenerateServerScene ();
 
     // Setup camera manager
     cameraManager_ = new ServerCameraManager (context_);
-    cameraManager_->Setup (scene_);
+    cameraManager_->Setup ();
     context_->RegisterSubsystem (cameraManager_);
 
     // Setup players manager
     playersManager_ = new PlayersManager (context_);
-    playersManager_->Setup (scene_);
+    playersManager_->Setup ();
     context_->RegisterSubsystem (playersManager_);
 
     // Start server
@@ -77,5 +76,4 @@ void Urho3DApplication::Stop ()
 {
     GetSubsystem <Urho3D::Network> ()->StopServer ();
     scene_->RemoveAllChildren ();
-    delete scene_;
 }

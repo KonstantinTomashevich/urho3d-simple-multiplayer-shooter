@@ -7,14 +7,10 @@ class Spawner : public Urho3D::Object
 {
 URHO3D_OBJECT (Spawner, Object)
 protected:
-    Urho3D::Scene *scene_;
     Urho3D::PODVector <Urho3D::Vector3> placedObstacles_;
 public:
     Spawner (Urho3D::Context *context);
     virtual ~Spawner ();
-
-    void SetScene (Urho3D::Scene *scene);
-    Urho3D::Scene *GetScene ();
     Urho3D::PODVector <Urho3D::Vector3> *GetPlacedObstaclesVectorPointer ();
 
     void GenerateServerScene ();

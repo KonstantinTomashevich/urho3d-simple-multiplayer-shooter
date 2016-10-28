@@ -108,8 +108,7 @@ PlayerState *PlayersManager::GetPlayerByName (Urho3D::String name)
 
 PlayersManager::PlayersManager (Urho3D::Context *context) :
     Urho3D::Object (context),
-    players_ (),
-    scene_ (0)
+    players_ ()
 {
 
 }
@@ -124,15 +123,13 @@ Urho3D::HashMap <Urho3D::StringHash, PlayerState *> *PlayersManager::GetPlayers 
     return &players_;
 }
 
-void PlayersManager::Setup (Urho3D::Scene *scene)
+void PlayersManager::Setup ()
 {
-    assert (scene);
     SubscribeToEvent (Urho3D::E_CLIENTCONNECTED, URHO3D_HANDLER (PlayersManager, OnClientConnected));
     SubscribeToEvent (Urho3D::E_CLIENTDISCONNECTED, URHO3D_HANDLER (PlayersManager, OnClientDisconnected));
     SubscribeToEvent (Urho3D::E_NETWORKMESSAGE, URHO3D_HANDLER (PlayersManager, OnNetworkMessage));
     SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (PlayersManager, Update));
     SubscribeToEvent (Urho3D::StringHash ("PlayerShooted"), URHO3D_HANDLER (PlayersManager, OnPlayerShooted));
-    scene_ = scene;
 }
 
 void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -144,8 +141,11 @@ void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &e
         playerState->Update (timeStep);
     }
 
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
     Urho3D::PODVector <Urho3D::Node *> nodes;
-    scene_->GetChildren (nodes, true);
+    scene->GetChildren (nodes, true);
+
     for (int index = 0; index < nodes.Size (); index++)
     {
         Urho3D::Node *node = nodes.At (index);
@@ -197,7 +197,6 @@ void PlayersManager::Reset ()
         delete players_.Front ().second_;
         players_.Erase (players_.Front ().first_);
     }
-    scene_ = 0;
 }
 
 void PlayersManager::RequestName (PlayerState *requester)
@@ -217,9 +216,11 @@ void PlayersManager::RequestRespawn (PlayerState *requester)
     assert (!requester->GetNode ());
     assert (requester->GetTimeBeforeSpawn () <= 0);
 
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
     Spawner *spawner = context_->GetSubsystem <Spawner> ();
     unsigned id = spawner->SpawnPlayer ();
-    requester->SetNode (scene_->GetNode (id));
+    requester->SetNode (scene->GetNode (id));
 
     Urho3D::VectorBuffer messageData;
     messageData.WriteUInt (id);
@@ -233,7 +234,9 @@ void PlayersManager::OnClientConnected (Urho3D::StringHash eventType, Urho3D::Va
             (Urho3D::Connection *) eventData [Urho3D::ClientConnected::P_CONNECTION].GetPtr ();
 
     players_ [Urho3D::StringHash (connection->ToString ())] = new PlayerState (this, connection);
-    connection->SetScene (scene_);
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    connection->SetScene (scene);
 }
 
 void PlayersManager::OnClientDisconnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)

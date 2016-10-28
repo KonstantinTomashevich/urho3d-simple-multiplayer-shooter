@@ -6,7 +6,6 @@ class PlayersManager : public Urho3D::Object
 {
 URHO3D_OBJECT (PlayersManager, Object)
 protected:
-    Urho3D::Scene *scene_;
     Urho3D::HashMap <Urho3D::StringHash, PlayerState *> players_;
 
     Urho3D::String CreateUniqueName (Urho3D::String requestedName);
@@ -24,7 +23,7 @@ public:
     virtual ~PlayersManager ();
 
     Urho3D::HashMap<Urho3D::StringHash, PlayerState *> *GetPlayers();
-    void Setup (Urho3D::Scene *scene);
+    void Setup ();
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void Reset ();

@@ -7,13 +7,12 @@ class ServerCameraManager : public Urho3D::Object
 {
 URHO3D_OBJECT (ServerCameraManager, Object)
 protected:
-    Urho3D::Scene *scene_;
     Urho3D::Node *camera_;
 public:
     ServerCameraManager (Urho3D::Context *context);
     virtual ~ServerCameraManager ();
 
-    void Setup (Urho3D::Scene *scene);
+    void Setup ();
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void Reset ();
 };
