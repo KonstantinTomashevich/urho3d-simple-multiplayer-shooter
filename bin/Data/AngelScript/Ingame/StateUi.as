@@ -84,7 +84,6 @@ namespace Ingame
         // *** Calculate and set ui elements positions and sizes
         void Resize (int width, int height)
         {
-            // TODO: Maybe add Floor's?
             float aspectRatio = 1.0f * width / height;
             infoText_.SetPosition (height * 0.03f, height * 0.03f);
             infoText_.fontSize = height * 0.05f;

@@ -49,7 +49,7 @@ namespace LogInToServer
             
             background_ = rootElement_.CreateChild ("Sprite", "background");
             background_.texture = cache.GetResource ("Texture2D", "Textures/StoneDiffuse.dds");
-            background_.color = Color (0.5, 0.5, 0.5, 1);
+            background_.color = Color (0.5f, 0.5f, 0.5f, 1.0f);
             
             inputAdressHint_ = rootElement_.CreateChild ("Text", "input_adress_hint");
             inputAdressHint_.text = "Input server adress:";
@@ -58,6 +58,7 @@ namespace LogInToServer
             adressEdit_ = rootElement_.CreateChild ("LineEdit", "adress_edit");
             adressEdit_.text = SharedGlobals::lastAdress;
             adressEdit_.SetStyleAuto (styles_);
+            adressEdit_.cursorPosition = 0;
             
             inputPortHint_ = rootElement_.CreateChild ("Text", "input_port_hint");
             inputPortHint_.text = "Input server port:";
@@ -66,6 +67,7 @@ namespace LogInToServer
             portEdit_ = rootElement_.CreateChild ("LineEdit", "port_edit");
             portEdit_.text = "" + SharedGlobals::lastPort;
             portEdit_.SetStyleAuto (styles_);
+            portEdit_.cursorPosition = 0;
             
             inputNicknameHint_ = rootElement_.CreateChild ("Text", "input_nickname_hint");
             inputNicknameHint_.text = "Input your nickname:";
@@ -74,6 +76,7 @@ namespace LogInToServer
             nicknameEdit_ = rootElement_.CreateChild ("LineEdit", "nickname_edit");
             nicknameEdit_.text = SharedGlobals::lastNickname;
             nicknameEdit_.SetStyleAuto (styles_);
+            nicknameEdit_.cursorPosition = 0;
             
             connectButton_ = rootElement_.CreateChild ("Button", "connect_button");
             connectButton_.SetStyleAuto (styles_);
