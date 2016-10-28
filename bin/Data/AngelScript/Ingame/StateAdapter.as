@@ -30,6 +30,7 @@ namespace Ingame
         {
             SubscribeToEvent ("NetworkMessage", "HandleEvent");
             SubscribeToEvent ("UIMouseClickEnd", "HandleEvent");
+            SubscribeToEvent ("ServerDisconnected", "HandleEvent");
             
             stateUi.Setup ();
             localSceneManager.Setup ();
@@ -53,7 +54,14 @@ namespace Ingame
         
         void HandleEvent (StringHash eventType, VariantMap &eventData)
         {
-            if (eventType == StringHash ("NetworkMessage"))
+            if (eventType == StringHash ("ServerDisconnected"))
+            {
+                ErrorDialog ("Disconnected from server!", 
+                             "Disconnected from server!\nServers' adress: " + SharedGlobals::lastAdress +
+                             ":" + SharedGlobals::lastPort + ".");
+                engine.Exit ();
+            }
+            else if (eventType == StringHash ("NetworkMessage"))
                 networkHandler.HandleEvent (eventType, eventData);
             else if (eventType == StringHash ("UIMouseClickEnd"))
                 uiListener.HandleEvent (eventType, eventData);
