@@ -1,5 +1,5 @@
 #include "BuildConfiguration.hpp"
-#include "ServerCameraManager.hpp"
+#include "CameraManager.hpp"
 #include <Shared/Constants.hpp>
 
 #include <Urho3D/Input/Input.h>
@@ -14,18 +14,18 @@
 #include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Viewport.h>
 
-ServerCameraManager::ServerCameraManager (Urho3D::Context *context) :
+CameraManager::CameraManager (Urho3D::Context *context) :
     Urho3D::Object (context)
 {
 
 }
 
-ServerCameraManager::~ServerCameraManager ()
+CameraManager::~CameraManager ()
 {
     Reset ();
 }
 
-void ServerCameraManager::Setup ()
+void CameraManager::Setup ()
 {
     Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
     assert (scene);
@@ -46,10 +46,10 @@ void ServerCameraManager::Setup ()
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
     Urho3D::Node *zoneNode = scene->CreateChild ("zone", Urho3D::LOCAL);
     zoneNode->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> ("Objects/zone_for_server.xml")->GetRoot ());
-    SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (ServerCameraManager, Update));
+    SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (CameraManager, Update));
 }
 
-void ServerCameraManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+void CameraManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
 {
     assert (camera_);
     float timestep = eventData [Urho3D::Update::P_TIMESTEP].GetFloat ();
@@ -82,7 +82,7 @@ void ServerCameraManager::Update (Urho3D::StringHash eventType, Urho3D::VariantM
     camera_->SetPosition (camera_->GetPosition () + move);
 }
 
-void ServerCameraManager::Reset ()
+void CameraManager::Reset ()
 {
     camera_ = 0;
     UnsubscribeFromAllEvents ();

@@ -59,7 +59,7 @@ void Urho3DApplication::Start ()
     spawner_->GenerateServerScene ();
 
     // Setup camera manager
-    cameraManager_ = new ServerCameraManager (context_);
+    cameraManager_ = new CameraManager (context_);
     cameraManager_->Setup ();
     context_->RegisterSubsystem (cameraManager_);
 

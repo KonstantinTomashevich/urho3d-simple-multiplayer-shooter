@@ -3,14 +3,14 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/Node.h>
 
-class ServerCameraManager : public Urho3D::Object
+class CameraManager : public Urho3D::Object
 {
-URHO3D_OBJECT (ServerCameraManager, Object)
+URHO3D_OBJECT (CameraManager, Object)
 protected:
     Urho3D::Node *camera_;
 public:
-    ServerCameraManager (Urho3D::Context *context);
-    virtual ~ServerCameraManager ();
+    CameraManager (Urho3D::Context *context);
+    virtual ~CameraManager ();
 
     void Setup ();
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
