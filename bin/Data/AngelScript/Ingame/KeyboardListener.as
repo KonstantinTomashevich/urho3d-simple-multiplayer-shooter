@@ -8,6 +8,7 @@ namespace Ingame
     const int KEY_MOVE_BACK= KEY_S;
     const int KEY_ROTATE_RIGHT = KEY_D;
     const int KEY_ROTATE_LEFT = KEY_A;
+    const int KEY_FIRE = KEY_Q;
     // ***
     
     // *** Constants for keyboard listener
@@ -59,6 +60,9 @@ namespace Ingame
                 networkHandler.SendMoveRequest (moveRequest);
                 timeFromLastMoveRequest = 0.0f;
             }
+            
+            if (input.keyPress [KEY_FIRE] and stateUi.messageEdit_.focus == false)
+                networkHandler.SendFireRequest ();
                 
             if (localSceneManager.playerNode is null)
                 timeFromLastMoveRequest = 0.0f;

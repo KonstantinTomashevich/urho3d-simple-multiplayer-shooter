@@ -1,6 +1,7 @@
 #pragma once
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Scene/Scene.h>
+#include "PlayerState.hpp"
 
 class Spawner : public Urho3D::Object
 {
@@ -26,5 +27,9 @@ public:
     void GenerateObstacles (int count);
     void AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion rotation);
     unsigned SpawnPlayer ();
+
+    void SpawnExplossion (Urho3D::Vector3 position);
+    void OnExplossion (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void SpawnShell (PlayerState *player);
 };
 

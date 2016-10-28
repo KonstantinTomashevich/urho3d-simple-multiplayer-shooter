@@ -4,6 +4,7 @@
 #include <Urho3D/Network/Connection.h>
 
 class PlayersManager;
+class Spawner;
 class PlayerState
 {
 protected:
@@ -24,7 +25,9 @@ public:
     PlayerState (PlayersManager *manager, Urho3D::Connection *connection);
     virtual ~PlayerState ();
 
+    // TODO: Update will be virtual. It needed for AIPlayerState implementantion.
     void Update (float timeStep);
+    void TryToFire (Spawner *spawner);
     Urho3D::Connection *GetConnection ();
 
     float GetTimeFromLastFire ();
@@ -45,4 +48,8 @@ public:
 
     int GetDeaths ();
     void IncrementDeaths ();
+
+    float GetShellDamage ();
+    // Returns true if player survived, otherwise false.
+    bool ApplyDamage(float damage);
 };

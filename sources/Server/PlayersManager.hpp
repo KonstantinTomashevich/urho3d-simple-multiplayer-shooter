@@ -12,9 +12,13 @@ protected:
     Urho3D::String CreateUniqueName (Urho3D::String requestedName);
     void ProcessNameRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
     void ProcessGetTimeUntilSpawn (Urho3D::Connection *connection);
+
     void ProcessChatMessageRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
     void ProcessSetMoveRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data);
+    void ProcessFireRequest (Urho3D::Connection *connection);
+
     void SendServerMessage (Urho3D::String message);
+    PlayerState *GetPlayerByName (Urho3D::String name);
 public:
     PlayersManager (Urho3D::Context *context);
     virtual ~PlayersManager ();
@@ -22,6 +26,7 @@ public:
     Urho3D::HashMap<Urho3D::StringHash, PlayerState *> *GetPlayers();
     void Setup (Urho3D::Scene *scene);
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void Reset ();
 
     void RequestName (PlayerState *requester);

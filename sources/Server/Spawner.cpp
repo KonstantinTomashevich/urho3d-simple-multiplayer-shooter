@@ -18,7 +18,7 @@ Spawner::Spawner (Urho3D::Context *context) :
     Urho3D::Object (context),
     scene_ (0)
 {
-
+    SubscribeToEvent (Urho3D::StringHash ("Explossion"), URHO3D_HANDLER (Spawner, OnExplossion));
 }
 
 Spawner::~Spawner ()
@@ -172,5 +172,43 @@ unsigned Spawner::SpawnPlayer ()
     shape->Remove ();
     playerNode->AddComponent (shape.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
     return playerNode->GetID ();
+}
+
+void Spawner::SpawnExplossion (Urho3D::Vector3 position)
+{
+    Urho3D::Node *explossionNode = scene_->CreateChild ("explossion", Urho3D::REPLICATED);
+    explossionNode->SetPosition (position);
+    explossionNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_EXPLOSSION);
+
+    Urho3D::Node *explossionLocal = explossionNode->CreateChild ("local", Urho3D::LOCAL);
+    Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
+    explossionLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::EXPLOSSION_LOCAL_PREFAB)->GetRoot ());
+}
+
+void Spawner::OnExplossion (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    Urho3D::Vector3 position = eventData [Urho3D::StringHash ("Position")].GetVector3 ();
+    SpawnExplossion (position);
+}
+
+void Spawner::SpawnShell (PlayerState *player)
+{
+    Urho3D::Node *shellNode = scene_->CreateChild ("shell", Urho3D::REPLICATED);
+    shellNode->SetPosition (player->GetNode ()->LocalToWorld (Urho3D::Vector3::FORWARD * 1.5f));
+    shellNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_SHELL);
+    shellNode->SetVar (SerializationConstants::NAME_VAR_HASH, player->GetName ());
+
+    Urho3D::Node *shellLocal = shellNode->CreateChild ("local", Urho3D::LOCAL);
+    Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
+    shellLocal->LoadXML (resourceCache->GetResource <Urho3D::XMLFile> (SceneConstants::SHELL_LOCAL_PREFAB)->GetRoot ());
+
+    Urho3D::SharedPtr <Urho3D::RigidBody> body (shellLocal->GetComponent <Urho3D::RigidBody> ());
+    body->Remove ();
+    shellNode->AddComponent (body.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
+    body->SetLinearVelocity (player->GetNode ()->GetWorldRotation () * GameplayConstants::SHELL_LINEAR_VELOCITY);
+
+    Urho3D::SharedPtr <Urho3D::CollisionShape> shape (shellLocal->GetComponent <Urho3D::CollisionShape> ());
+    shape->Remove ();
+    shellNode->AddComponent (shape.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
 }
 

@@ -77,6 +77,12 @@ void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho
     playerState->SetNormalizedMoveRequest (moveRequest);
 }
 
+void PlayersManager::ProcessFireRequest (Urho3D::Connection *connection)
+{
+    PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
+    playerState->TryToFire (context_->GetSubsystem <Spawner> ());
+}
+
 void PlayersManager::SendServerMessage (Urho3D::String message)
 {
     Urho3D::VectorBuffer messageData;
@@ -87,6 +93,17 @@ void PlayersManager::SendServerMessage (Urho3D::String message)
         if (player)
             player->GetConnection ()->SendMessage (NetworkMessageIds::STC_SERVER_MESSAGE, true, false, messageData);
     }
+}
+
+PlayerState *PlayersManager::GetPlayerByName (Urho3D::String name)
+{
+    for (int index = 0; index < players_.Values ().Size (); index++)
+    {
+        PlayerState *player = players_.Values ().At (index);
+        if (player && player->GetName () == name)
+            return player;
+    }
+    return 0;
 }
 
 PlayersManager::PlayersManager (Urho3D::Context *context) :
@@ -114,6 +131,7 @@ void PlayersManager::Setup (Urho3D::Scene *scene)
     SubscribeToEvent (Urho3D::E_CLIENTDISCONNECTED, URHO3D_HANDLER (PlayersManager, OnClientDisconnected));
     SubscribeToEvent (Urho3D::E_NETWORKMESSAGE, URHO3D_HANDLER (PlayersManager, OnNetworkMessage));
     SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (PlayersManager, Update));
+    SubscribeToEvent (Urho3D::StringHash ("PlayerShooted"), URHO3D_HANDLER (PlayersManager, OnPlayerShooted));
     scene_ = scene;
 }
 
@@ -124,6 +142,50 @@ void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &e
     {
         PlayerState *playerState = players_.Values ().At (index);
         playerState->Update (timeStep);
+    }
+
+    Urho3D::PODVector <Urho3D::Node *> nodes;
+    scene_->GetChildren (nodes, true);
+    for (int index = 0; index < nodes.Size (); index++)
+    {
+        Urho3D::Node *node = nodes.At (index);
+        if (node->GetID () < Urho3D::FIRST_LOCAL_ID &&
+                node->GetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH).GetInt () ==
+                SerializationConstants::OBJECT_TYPE_PLAYER &&
+                node->GetVar (SerializationConstants::HEALTH_VAR_HASH).GetFloat () < 0.0f)
+        {
+            if (node->HasTag ("Died"))
+            {
+                float timeBeforeRemove = node->GetVar (Urho3D::StringHash ("timeBeforeRemove")).GetFloat ();
+                timeBeforeRemove -= timeStep;
+                if (timeBeforeRemove < 0)
+                    node->Remove ();
+                else
+                    node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), timeBeforeRemove);
+            }
+            else
+            {
+                node->AddTag ("Died");
+                node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), GameplayConstants::DEAD_PLAYERS_REMOVE_TIME);
+            }
+        }
+    }
+}
+
+void PlayersManager::OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    PlayerState *attacker = GetPlayerByName (
+                eventData [Urho3D::StringHash ("AttackerPlayerName")].GetString ());
+    PlayerState *damaged = GetPlayerByName (
+                eventData [Urho3D::StringHash ("DamagedPlayerName")].GetString ());
+
+    assert (attacker);
+    assert (damaged);
+
+    if (!damaged->ApplyDamage (attacker->GetShellDamage ()))
+    {
+        attacker->IncrementKills ();
+        SendServerMessage (damaged->GetName () + " killed by " + attacker->GetName () + "!");
     }
 }
 
@@ -199,15 +261,16 @@ void PlayersManager::OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::Var
     if (messageId == NetworkMessageIds::CTS_REQUEST_NAME)
         ProcessNameRequest (connection, data);
 
-    else if (messageId == NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN)
-        ProcessGetTimeUntilSpawn (connection);
+    else if (messageId == NetworkMessageIds::CTS_SET_MOVE_REQUEST)
+        ProcessSetMoveRequest (connection, data);
+
+    else if (messageId == NetworkMessageIds::CTS_REQUEST_FIRE)
+        ProcessFireRequest (connection);
 
     else if (messageId == NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE)
         ProcessChatMessageRequest (connection, data);
 
-    else if (messageId == NetworkMessageIds::CTS_SET_MOVE_REQUEST)
-        ProcessSetMoveRequest (connection, data);
-
-    // TODO: Implement all messages processing.
+    else if (messageId == NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN)
+        ProcessGetTimeUntilSpawn (connection);
 }
 

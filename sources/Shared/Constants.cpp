@@ -49,15 +49,20 @@ GETTER (int, MAXIMUM_OBSTACLES_COUNT)
 
 namespace GameplayConstants
 {
-
 GETTER (int, RESPAWN_TIME)
 GETTER (int, HEALTH_REGENERATION)
-GETTER (int, MAX_HEALTH)
-GETTER (int, DEAD_PLAYERS_REMOVE_TIME)
+GETTER (int, BASIC_MAX_HEALTH)
+GETTER (float, DEAD_PLAYERS_REMOVE_TIME)
 GETTER (float, FIRE_COOLDOWN_TIME)
 
 GETTER (float, MOVE_IMPULSE)
 GETTER (float, ROTATION_IMPULSE)
+GETTER (Urho3D::Vector3, SHELL_LINEAR_VELOCITY)
+
+GETTER (float, MAX_HEALTH_INCREASE_PER_EXP)
+GETTER (float, SHELL_DAMAGE_INCREASE_PER_EXP)
+GETTER (int, MAX_EXP)
+GETTER (float, BASIC_SHELL_DAMAGE)
 }
 
 namespace SerializationConstants
@@ -65,12 +70,14 @@ namespace SerializationConstants
 GETTER (Urho3D::StringHash, HEALTH_VAR_HASH)
 GETTER (Urho3D::StringHash, NAME_VAR_HASH)
 GETTER (Urho3D::StringHash, OBJECT_TYPE_VAR_HASH)
+GETTER (Urho3D::StringHash, EXP_VAR_HASH)
 
 GETTER (int, OBJECT_TYPE_WITHOUT_LOCALS)
 GETTER (int, OBJECT_TYPE_TERRAIN)
 GETTER (int, OBJECT_TYPE_OBSTACLE)
 GETTER (int, OBJECT_TYPE_PLAYER)
 GETTER (int, OBJECT_TYPE_SHELL)
+GETTER (int, OBJECT_TYPE_EXPLOSSION)
 }
 
 namespace SceneConstants
@@ -79,6 +86,7 @@ GETTER (Urho3D::String, TERRAIN_LOCAL_PREFAB)
 GETTER (Urho3D::String, OBSTACLE_LOCAL_PREFAB)
 GETTER (Urho3D::String, PLAYER_LOCAL_PREFAB)
 GETTER (Urho3D::String, SHELL_LOCAL_PREFAB)
+GETTER (Urho3D::String, EXPLOSSION_LOCAL_PREFAB)
 }
 
 void BindConstantsToAngelScript (Urho3D::Script *script)
@@ -103,27 +111,36 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
 
     BIND_CONSTANT (engine, int, GameplayConstants, RESPAWN_TIME);
     BIND_CONSTANT (engine, int, GameplayConstants, HEALTH_REGENERATION);
-    BIND_CONSTANT (engine, int, GameplayConstants, MAX_HEALTH);
-    BIND_CONSTANT (engine, int, GameplayConstants, DEAD_PLAYERS_REMOVE_TIME);
+    BIND_CONSTANT (engine, int, GameplayConstants, BASIC_MAX_HEALTH);
+    BIND_CONSTANT (engine, float, GameplayConstants, DEAD_PLAYERS_REMOVE_TIME);
     BIND_CONSTANT (engine, float, GameplayConstants, FIRE_COOLDOWN_TIME);
 
     BIND_CONSTANT (engine, float, GameplayConstants, MOVE_IMPULSE);
     BIND_CONSTANT (engine, float, GameplayConstants, ROTATION_IMPULSE);
+    BIND_CONSTANT (engine, Vector3, GameplayConstants, SHELL_LINEAR_VELOCITY);
+
+    BIND_CONSTANT (engine, float, GameplayConstants, MAX_HEALTH_INCREASE_PER_EXP);
+    BIND_CONSTANT (engine, float, GameplayConstants, SHELL_DAMAGE_INCREASE_PER_EXP);
+    BIND_CONSTANT (engine, int, GameplayConstants, MAX_EXP);
+    BIND_CONSTANT (engine, float, GameplayConstants, BASIC_SHELL_DAMAGE);
 
     BIND_CONSTANT (engine, StringHash, SerializationConstants, HEALTH_VAR_HASH);
     BIND_CONSTANT (engine, StringHash, SerializationConstants, NAME_VAR_HASH);
     BIND_CONSTANT (engine, StringHash, SerializationConstants, OBJECT_TYPE_VAR_HASH);
+    BIND_CONSTANT (engine, StringHash, SerializationConstants, EXP_VAR_HASH);
 
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_WITHOUT_LOCALS);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_TERRAIN);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_OBSTACLE);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_PLAYER);
     BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_SHELL);
+    BIND_CONSTANT (engine, int, SerializationConstants, OBJECT_TYPE_EXPLOSSION);
 
     BIND_CONSTANT (engine, String, SceneConstants, TERRAIN_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, OBSTACLE_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, PLAYER_LOCAL_PREFAB);
     BIND_CONSTANT (engine, String, SceneConstants, SHELL_LOCAL_PREFAB);
+    BIND_CONSTANT (engine, String, SceneConstants, EXPLOSSION_LOCAL_PREFAB);
 
     engine->RegisterEnum ("NetworkMessageId");
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_STC_PLAYER_NAME_SETTED", NetworkMessageIds::STC_PLAYER_NAME_SETTED);

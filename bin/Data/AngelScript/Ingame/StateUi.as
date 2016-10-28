@@ -114,8 +114,13 @@ namespace Ingame
             
             String info = nickname_ + "\n";
             if (isSpawned_)
-                info += Floor (localSceneManager.playerLives) + "/" +
-                GameplayConstants__MAX_HEALTH + " HP.";
+            {
+                int lives = Floor (localSceneManager.playerLives);
+                int exp = localSceneManager.playerExp;
+                int maxLives = Floor (GameplayConstants__BASIC_MAX_HEALTH * 
+                                      (1.0f + exp * GameplayConstants__MAX_HEALTH_INCREASE_PER_EXP));
+                info += lives + "/" + maxLives + " HP.\n" + exp + " EXP.";
+            }
             else
                 info += Floor (timeUntilSpawn_) + "s until respawn.";
             infoText_.text = info;
@@ -148,9 +153,23 @@ namespace Ingame
                     String labelText = 
                         otherPlayerNode.vars [SerializationConstants__NAME_VAR_HASH].
                             GetString () + "\n";
-                    labelText += 
-                        Floor (otherPlayerNode.vars [SerializationConstants__HEALTH_VAR_HASH].
-                               GetFloat ()) + "/" + GameplayConstants__MAX_HEALTH + " HP.";
+                    
+                    if (not otherPlayerNode.HasTag ("Died"))
+                    {    
+                        int otherPlayerLives = Floor (otherPlayerNode.vars 
+                                                      [SerializationConstants__HEALTH_VAR_HASH].
+                                                      GetFloat ());
+                        int otherPlayerExp = otherPlayerNode.vars 
+                                                [SerializationConstants__EXP_VAR_HASH].GetInt ();
+                        int OtherPlayerMaxLives = Floor (GameplayConstants__BASIC_MAX_HEALTH *
+                                                    (1.0f + otherPlayerExp * 
+                                                     GameplayConstants__MAX_HEALTH_INCREASE_PER_EXP));
+                        
+                        labelText += otherPlayerLives + "/" + OtherPlayerMaxLives + " HP.\n" +
+                                     otherPlayerExp + " EXP.";
+                    }
+                    else
+                        labelText += "[Died]";
                         
                     label.text = labelText;
                     label.visible = true;

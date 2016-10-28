@@ -23,37 +23,35 @@ namespace Ingame
             Node @localNode = replicatedNode.CreateChild ("local", LOCAL);
             
             if (nodeLocalType == SerializationConstants__OBJECT_TYPE_TERRAIN)
-            {
                 localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
                                                                        SceneConstants__TERRAIN_LOCAL_PREFAB))).
                                    GetRoot ());
-                // Physics will be calculated on server
-                localNode.RemoveComponents ("RigidBody");
-                localNode.RemoveComponents ("CollsionShape");
-            }
             
             else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_OBSTACLE)
-            {
                 localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
                                                                        SceneConstants__OBSTACLE_LOCAL_PREFAB))).
                                    GetRoot ());
-                // Physics will be calculated on server
-                localNode.RemoveComponents ("RigidBody");
-                localNode.RemoveComponents ("CollsionShape");
-            }
             
             else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_PLAYER)
-            {
                 localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
                                                                        SceneConstants__PLAYER_LOCAL_PREFAB))).
                                    GetRoot ());
-                // Physics will be calculated on server
-                localNode.RemoveComponents ("RigidBody");
-                localNode.RemoveComponents ("CollsionShape");
-            }
             
-            // TODO: Implement shell.
+            else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_SHELL)
+                localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
+                                                                       SceneConstants__SHELL_LOCAL_PREFAB))).
+                                   GetRoot ());
             
+            else if (nodeLocalType == SerializationConstants__OBJECT_TYPE_EXPLOSSION)
+                localNode.LoadXML ((cast <XMLFile> (cache.GetResource ("XMLFile",
+                                                                       SceneConstants__EXPLOSSION_LOCAL_PREFAB))).
+                                   GetRoot ());;
+            
+            // Physics will be calculated on server
+            localNode.RemoveComponents ("RigidBody");
+            localNode.RemoveComponents ("CollsionShape");
+            // Scripts are server-only too!
+            localNode.RemoveComponents ("ScriptInstance");
             localNode.name = "local";
         }
         
@@ -145,14 +143,14 @@ namespace Ingame
             
             if (playerNode_ !is null)
             {
-                cameraNode_.position = playerNode_.LocalToWorld (Vector3 (0, 4, -8));
+                cameraNode_.position = playerNode_.LocalToWorld (Vector3 (0, 2.5f, -8));
                 cameraNode_.LookAt (playerNode_.position);
             }
             
-            if (playerNode_ !is null and playerLives < 0.0f)
+            if (playerNode_ !is null and get_playerLives () < 0.0f)
             {
                 playerNode_ = null;
-                stateUi.isSpawned_ = true;
+                stateUi.isSpawned_ = false;
             }
         }
         
@@ -194,6 +192,14 @@ namespace Ingame
                 return playerNode_.vars [SerializationConstants__HEALTH_VAR_HASH].GetFloat ();
             else
                 return -1;
+        }
+        
+        int get_playerExp ()
+        {
+            if (playerNode_ !is null)
+                return playerNode_.vars [SerializationConstants__EXP_VAR_HASH].GetInt ();
+            else
+                return 0;
         }
         
         Node @get_cameraNode ()

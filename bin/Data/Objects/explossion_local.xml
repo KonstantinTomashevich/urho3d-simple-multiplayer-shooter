@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<node id="8">
+	<attribute name="Is Enabled" value="true" />
+	<attribute name="Name" value="local" />
+	<attribute name="Tags" />
+	<attribute name="Position" value="0 0 0" />
+	<attribute name="Rotation" value="1 0 0 0" />
+	<attribute name="Scale" value="1 1 1" />
+	<attribute name="Variables" />
+	<component type="ParticleEmitter" id="16777240">
+		<attribute name="Effect" value="ParticleEffect;Particles/explossion.xml" />
+		<attribute name="Animation LOD Bias" value="0" />
+		<attribute name="Particles">
+			<variant type="Int" value="50" />
+		</attribute>
+		<attribute name="Billboards">
+			<variant type="Int" value="50" />
+		</attribute>
+		<attribute name="Serialize Particles" value="false" />
+	</component>
+	<component type="ScriptInstance" id="16777241">
+		<attribute name="Delayed Method Calls" value="0" />
+		<attribute name="Script File" value="ScriptFile;AngelScript/Components/Explossion.as" />
+		<attribute name="Class Name" value="Explossion" />
+	</component>
+</node>

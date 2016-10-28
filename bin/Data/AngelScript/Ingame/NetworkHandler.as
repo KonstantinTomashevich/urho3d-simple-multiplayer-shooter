@@ -96,6 +96,12 @@ namespace Ingame
                 network.serverConnection.SendMessage (NMID_CTS_SET_MOVE_REQUEST, true, false, messageData);
         }
         
+        void SendFireRequest ()
+        {
+            if (network.serverConnection !is null)
+                network.serverConnection.SendMessage (NMID_CTS_REQUEST_FIRE, true, false, VectorBuffer ());
+        }
+        
         void HandleEvent (StringHash eventType, VariantMap &eventData)
         {
             if (eventData ["MessageID"] == NMID_STC_PLAYER_NAME_SETTED)

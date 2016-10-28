@@ -44,11 +44,17 @@ void Urho3DApplication::Start ()
     input->SetMouseVisible (true);
     input->SetMouseMode (Urho3D::MM_FREE);
 
+    // Register AngelScript subsystem.
+    Urho3D::Script *script = new Urho3D::Script (context_);
+    context_->RegisterSubsystem (script);
+    BindConstantsToAngelScript (script);
+
     // Add spawner and generate scene.
     Urho3D::SetRandomSeed (Urho3D::Time::GetTimeSinceEpoch ());
     spawner_ = new Spawner (context_);
     context_->RegisterSubsystem (spawner_);
 
+    // TODO: Maybe add scene to subsystems?
     scene_ = new Urho3D::Scene (context_);
     spawner_->SetScene (scene_);
     spawner_->GenerateServerScene ();

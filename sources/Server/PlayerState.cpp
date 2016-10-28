@@ -1,6 +1,8 @@
 #include "BuildConfiguration.hpp"
 #include "PlayerState.hpp"
 #include "PlayersManager.hpp"
+#include "Spawner.hpp"
+
 #include <Shared/Constants.hpp>
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/IO/Log.h>
@@ -43,8 +45,9 @@ void PlayerState::Update (float timeStep)
             else
             {
                 manager_->RequestRespawn (this);
-                node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::MAX_HEALTH);
+                node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::BASIC_MAX_HEALTH);
                 node_->SetVar (SerializationConstants::NAME_VAR_HASH, Urho3D::Variant (name_));
+                node_->SetVar (SerializationConstants::EXP_VAR_HASH, Urho3D::Variant (0));
             }
         }
         else
@@ -55,12 +58,14 @@ void PlayerState::Update (float timeStep)
                 // Server will remove all nodes with 'health < 0' after DEAD_PLAYERS_REMOVE_TIME.
                 node_ = 0;
                 IncrementDeaths ();
+                timeBeforeSpawn_ = GameplayConstants::RESPAWN_TIME;
             }
             else
             {
                 health += GameplayConstants::HEALTH_REGENERATION * timeStep;
-                if (health > 100.0f)
-                    health = 100.0f;
+                int exp = node_->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ();
+                if (health > GameplayConstants::BASIC_MAX_HEALTH * (1 + exp * GameplayConstants::MAX_HEALTH_INCREASE_PER_EXP))
+                    health = GameplayConstants::BASIC_MAX_HEALTH * (1 + exp * GameplayConstants::MAX_HEALTH_INCREASE_PER_EXP);
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
 
                 Urho3D::RigidBody *physicsBody = node_->GetComponent <Urho3D::RigidBody> ();
@@ -78,6 +83,16 @@ void PlayerState::Update (float timeStep)
                     timeFromLastFire_ += timeStep;
             }
         }
+    }
+}
+
+void PlayerState::TryToFire (Spawner *spawner)
+{
+    if (timeFromLastFire_ >= GameplayConstants::FIRE_COOLDOWN_TIME)
+    {
+        assert (spawner);
+        spawner->SpawnShell (this);
+        timeFromLastFire_ = 0.0f;
     }
 }
 
@@ -144,6 +159,15 @@ int PlayerState::GetKills ()
 void PlayerState::IncrementKills ()
 {
     kills_ ++;
+    if (node_)
+    {
+        int exp = node_->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ();
+        if (exp < GameplayConstants::MAX_EXP)
+        {
+            exp ++;
+            node_->SetVar (SerializationConstants::EXP_VAR_HASH, Urho3D::Variant (exp));
+        }
+    }
 }
 
 int PlayerState::GetDeaths ()
@@ -154,5 +178,26 @@ int PlayerState::GetDeaths ()
 void PlayerState::IncrementDeaths ()
 {
     deaths_ ++;
+}
+
+float PlayerState::GetShellDamage ()
+{
+    int exp = 0;
+    if (node_)
+        exp = node_->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ();
+    return GameplayConstants::BASIC_SHELL_DAMAGE * (1 + exp * GameplayConstants::SHELL_DAMAGE_INCREASE_PER_EXP);
+}
+
+bool PlayerState::ApplyDamage (float damage)
+{
+    if (node_)
+    {
+        float health = node_->GetVar (SerializationConstants::HEALTH_VAR_HASH).GetFloat ();
+        health -= damage;
+        node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (health));
+        return (health >= 0.0f);
+    }
+    else
+        return false;
 }
 
