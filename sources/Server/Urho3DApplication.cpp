@@ -15,7 +15,6 @@ URHO3D_DEFINE_APPLICATION_MAIN (Urho3DApplication)
 
 Urho3DApplication::Urho3DApplication (Urho3D::Context *context) : Urho3D::Application (context),
     scene_ (0),
-    cameraManager_ (0),
     playersManager_ (0),
     spawner_ (0)
 {
@@ -58,11 +57,6 @@ void Urho3DApplication::Start ()
     context_->RegisterSubsystem (scene_);
     spawner_->GenerateServerScene ();
 
-    // Setup camera manager
-    cameraManager_ = new CameraManager (context_);
-    cameraManager_->Setup ();
-    context_->RegisterSubsystem (cameraManager_);
-
     // Setup players manager
     playersManager_ = new PlayersManager (context_);
     playersManager_->Setup ();
@@ -75,5 +69,5 @@ void Urho3DApplication::Start ()
 void Urho3DApplication::Stop ()
 {
     GetSubsystem <Urho3D::Network> ()->StopServer ();
-    scene_->RemoveAllChildren ();
+    scene_->Clear ();
 }

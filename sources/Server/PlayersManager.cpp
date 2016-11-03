@@ -59,7 +59,8 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
 {
     PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
     Urho3D::VectorBuffer messageData;
-    messageData.WriteString (data.ReadString ());
+    Urho3D::String message = data.ReadString ();
+    messageData.WriteString (message);
     messageData.WriteString (playerState->GetName ());
 
     for (int index = 0; index < players_.Values ().Size (); index++)
@@ -68,6 +69,11 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
         if (player)
             player->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
     }
+
+    Urho3D::VariantMap newChatMessageEventData;
+    newChatMessageEventData [Urho3D::StringHash ("Sender")] = playerState->GetName ();
+    newChatMessageEventData [Urho3D::StringHash ("Message")] = message;
+    SendEvent (Urho3D::StringHash ("NewChatMessage"), newChatMessageEventData);
 }
 
 void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho3D::VectorBuffer &data)
@@ -130,6 +136,7 @@ void PlayersManager::Setup ()
     SubscribeToEvent (Urho3D::E_NETWORKMESSAGE, URHO3D_HANDLER (PlayersManager, OnNetworkMessage));
     SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (PlayersManager, Update));
     SubscribeToEvent (Urho3D::StringHash ("PlayerShooted"), URHO3D_HANDLER (PlayersManager, OnPlayerShooted));
+    SubscribeToEvent (Urho3D::StringHash ("RequestServerMessage"), URHO3D_HANDLER (PlayersManager, OnServerMessageRequest));
 }
 
 void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -169,23 +176,6 @@ void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &e
                 node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), GameplayConstants::DEAD_PLAYERS_REMOVE_TIME);
             }
         }
-    }
-}
-
-void PlayersManager::OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
-{
-    PlayerState *attacker = GetPlayerByName (
-                eventData [Urho3D::StringHash ("AttackerPlayerName")].GetString ());
-    PlayerState *damaged = GetPlayerByName (
-                eventData [Urho3D::StringHash ("DamagedPlayerName")].GetString ());
-
-    assert (attacker);
-    assert (damaged);
-
-    if (!damaged->ApplyDamage (attacker->GetShellDamage ()))
-    {
-        attacker->IncrementKills ();
-        SendServerMessage (damaged->GetName () + " killed by " + attacker->GetName () + "!");
     }
 }
 
@@ -275,5 +265,28 @@ void PlayersManager::OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::Var
 
     else if (messageId == NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN)
         ProcessGetTimeUntilSpawn (connection);
+}
+
+void PlayersManager::OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    PlayerState *attacker = GetPlayerByName (
+                eventData [Urho3D::StringHash ("AttackerPlayerName")].GetString ());
+    PlayerState *damaged = GetPlayerByName (
+                eventData [Urho3D::StringHash ("DamagedPlayerName")].GetString ());
+
+    assert (attacker);
+    assert (damaged);
+
+    if (!damaged->ApplyDamage (attacker->GetShellDamage ()))
+    {
+        attacker->IncrementKills ();
+        SendServerMessage (damaged->GetName () + " killed by " + attacker->GetName () + "!");
+    }
+}
+
+void PlayersManager::OnServerMessageRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    Urho3D::String message = eventData [Urho3D::StringHash ("Message")].GetString ();
+    SendServerMessage (message);
 }
 

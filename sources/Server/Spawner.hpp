@@ -18,6 +18,7 @@ public:
     void AddStandartZone ();
     void AddStandartTerrain ();
     void AddStandartTerrainBorders ();
+    void AddStandartCamera ();
 
     float GetMinimumDistanceBetween (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others);
     void GenerateObstacles (int count);

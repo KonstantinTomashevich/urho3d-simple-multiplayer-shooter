@@ -111,6 +111,8 @@ namespace Ingame
                 Resize (lastScreenSize.x, lastScreenSize.y);
             }
             
+            // TODO: Refactor. Maybe split to special functions.
+            
             String info = nickname_ + "\n";
             if (isSpawned_)
             {

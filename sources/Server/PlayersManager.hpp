@@ -25,7 +25,6 @@ public:
     Urho3D::HashMap<Urho3D::StringHash, PlayerState *> *GetPlayers();
     void Setup ();
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
-    void OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void Reset ();
 
     void RequestName (PlayerState *requester);
@@ -34,4 +33,6 @@ public:
     void OnClientConnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnClientDisconnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void OnServerMessageRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
 };

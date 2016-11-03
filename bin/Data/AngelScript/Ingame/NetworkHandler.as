@@ -20,6 +20,7 @@ namespace Ingame
         
         protected void HandleChatMessage (VariantMap &eventData)
         {
+            // TODO: Add timestamp.
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
             stateUi.AddChatMessage ("[" + messageData.ReadString () + "]" +
                                      " : " + messageData.ReadString ());
@@ -28,8 +29,7 @@ namespace Ingame
         protected void HandleServerMessage (VariantMap &eventData)
         {
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
-            stateUi.AddChatMessage ("{Server}" +
-                                     " : " + messageData.ReadString ());
+            stateUi.AddChatMessage ("{Server} : " + messageData.ReadString ());
         }
         
         protected void HandlePlayerSpawned (VariantMap &eventData)

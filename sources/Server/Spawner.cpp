@@ -2,12 +2,16 @@
 #include "Spawner.hpp"
 #include <Urho3D/Graphics/Octree.h>
 #include <Urho3D/Graphics/Light.h>
+#include <Urho3D/Graphics/Camera.h>
+#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Physics/PhysicsWorld.h>
 
 #include <Urho3D/Scene/Node.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/Resource/XMLElement.h>
+#include <Urho3D/AngelScript/ScriptInstance.h>
+#include <Urho3D/AngelScript/ScriptFile.h>
 
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/Physics/CollisionShape.h>
@@ -37,12 +41,20 @@ void Spawner::GenerateServerScene ()
     assert (scene);
     scene->CreateComponent <Urho3D::Octree> ();
     scene->CreateComponent <Urho3D::PhysicsWorld> ();
+
     AddStandartLight ();
     AddStandartZone ();
     AddStandartTerrain ();
     AddStandartTerrainBorders ();
+    AddStandartCamera ();
     GenerateObstacles (Urho3D::Random (
                            ServerConstants::MINIMUM_OBSTACLES_COUNT, ServerConstants::MAXIMUM_OBSTACLES_COUNT));
+
+
+    Urho3D::ScriptInstance *serverCommandUiScript = scene->CreateComponent <Urho3D::ScriptInstance> (Urho3D::LOCAL);
+    Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();
+    serverCommandUiScript->CreateObject (resourceCache->GetResource <Urho3D::ScriptFile> (
+                                             "AngelScript/Components/ServerCommandUi.as"), "ServerCommandUi");
 }
 
 void Spawner::AddStandartLight ()
@@ -96,6 +108,25 @@ void Spawner::AddStandartTerrainBorders ()
             AddStandartObstacle (Urho3D::Vector3 (x, 2.5f, 52.5f), Urho3D::Quaternion ());
         }
     }
+}
+
+void Spawner::AddStandartCamera ()
+{
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::Node *cameraNode = scene->CreateChild ("server_local_camera", Urho3D::LOCAL);
+    cameraNode->SetPosition (Urho3D::Vector3 (0, 50, 0));
+    cameraNode->SetRotation (Urho3D::Quaternion (90, 0, 0));
+
+    Urho3D::Camera *camera = cameraNode->CreateComponent <Urho3D::Camera> (Urho3D::LOCAL);
+    camera->SetFarClip (300.0);
+    camera->SetAutoAspectRatio (true);
+
+    Urho3D::Renderer *renderer = GetSubsystem <Urho3D::Renderer> ();
+    Urho3D::SharedPtr <Urho3D::Viewport> viewport (
+                new Urho3D::Viewport (context_, scene, camera));
+    renderer->SetViewport (0, viewport);
+    renderer->SetShadowMapSize (1024);
 }
 
 float Spawner::GetMinimumDistanceBetween (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others)

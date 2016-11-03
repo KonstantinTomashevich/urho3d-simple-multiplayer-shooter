@@ -20,6 +20,7 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../bin/Data/AngelScript/Components/Explossion.as" />
+		<Unit filename="../bin/Data/AngelScript/Components/ServerCommandUi.as" />
 		<Unit filename="../bin/Data/AngelScript/Components/Shell.as" />
 		<Unit filename="../bin/Data/AngelScript/GameApplication.as" />
 		<Unit filename="../bin/Data/AngelScript/GameStatesSwitcher.as" />
