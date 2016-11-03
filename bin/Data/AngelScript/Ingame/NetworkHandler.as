@@ -29,7 +29,8 @@ namespace Ingame
         protected void HandleServerMessage (VariantMap &eventData)
         {
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
-            stateUi.AddChatMessage ("{Server} : " + messageData.ReadString ());
+            stateUi.AddChatMessage ("{" + time.timeStamp.Substring (11, 8) + 
+                                    " Server} : " + messageData.ReadString ());
         }
         
         protected void HandlePlayerSpawned (VariantMap &eventData)
