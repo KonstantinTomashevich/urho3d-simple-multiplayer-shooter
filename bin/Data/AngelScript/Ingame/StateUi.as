@@ -112,7 +112,13 @@ namespace Ingame
             }
             
             // TODO: Refactor. Maybe split to special functions.
-            
+            UpdateInfoText ();
+            UpdateChat ();
+            UpdatePlayersLabels ();
+        }
+        
+        void UpdateInfoText ()
+        {
             String info = nickname_ + "\n";
             if (isSpawned_)
             {
@@ -128,8 +134,10 @@ namespace Ingame
             
             if (!isSpawned_)
                 networkHandler.RequestTimeUntilSpawnFromServer ();
-                
-            
+        }
+        
+        void UpdateChat ()
+        {
             if (chatHistory_.length == 0)
                 chatHistoryUI_.text = "No chat messages yet...";
             else
@@ -140,7 +148,10 @@ namespace Ingame
                 for (int index = 0; index < chatHistory_.length; index++)
                     chatHistoryUI_.text = chatHistoryUI_.text + "\n" + chatHistory_ [index];
             }
-            
+        }
+        
+        void UpdatePlayersLabels ()
+        {
             Array <Node @> otherPlayersNodes = localSceneManager.otherPlayersNodes;
             Node @cameraNode = localSceneManager.cameraNode;
             Camera @camera = cameraNode.GetComponent ("Camera");
