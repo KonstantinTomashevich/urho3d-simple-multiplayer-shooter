@@ -165,15 +165,15 @@ class ServerCommandUi : ScriptObject
         
         messageEdit_.selected = false;
         messageEdit_.focus = false;
-        // TODO: Add timestamp.
-        chatHistory_.Push ("{Server} : " + messageEdit_.text);
+        chatHistory_.Push ("{" + time.timeStamp.Substring (11, 8) +
+                           " Server} : " + messageEdit_.text);
         messageEdit_.text = "";
     }
     
     void HandleNewChatMessage (StringHash eventType, VariantMap &eventData)
     {
-        // TODO: Add timestamp.
-        chatHistory_.Push ("[" + eventData ["Sender"].GetString () + "]" +
+        chatHistory_.Push ("[" + time.timeStamp.Substring (11, 8) + " " + 
+                           eventData ["Sender"].GetString () + "]" +
                             " : " + eventData ["Message"].GetString ());
     }
 }

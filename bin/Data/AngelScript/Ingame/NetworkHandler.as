@@ -20,9 +20,9 @@ namespace Ingame
         
         protected void HandleChatMessage (VariantMap &eventData)
         {
-            // TODO: Add timestamp.
             VectorBuffer messageData = eventData ["Data"].GetBuffer ();
-            stateUi.AddChatMessage ("[" + messageData.ReadString () + "]" +
+            stateUi.AddChatMessage ("[" +  time.timeStamp.Substring (11, 8) +
+                                    " " + messageData.ReadString () + "]" +
                                      " : " + messageData.ReadString ());
         }
         
