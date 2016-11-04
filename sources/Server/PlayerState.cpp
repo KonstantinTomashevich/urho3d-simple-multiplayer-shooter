@@ -22,7 +22,6 @@ PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connectio
     aiType_ (-1)
 {
     assert (manager);
-    assert (connection);
 }
 
 PlayerState::~PlayerState ()

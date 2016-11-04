@@ -4,12 +4,13 @@
 #include <AngelScript/angelscript.h>
 #include <Urho3D/AngelScript/APITemplates.h>
 
-AiPlayerState::AiPlayerState (PlayersManager *manager, Urho3D::Connection *connection, int aiType) :
-    PlayerState (manager, connection),
+AiPlayerState::AiPlayerState (PlayersManager *manager, int aiType) :
+    PlayerState (manager, 0),
     aiCommands_ (new AiCommands (manager->GetContext ()))
 {
     isAi_ = true;
     aiType_ = aiType;
+    timeBeforeSpawn_ = 0.0f;
 }
 
 AiPlayerState::~AiPlayerState ()
@@ -22,8 +23,10 @@ void AiPlayerState::Update (float timeStep)
     if (node_)
     {
         Urho3D::ScriptInstance *aiScript = node_->GetComponent <Urho3D::ScriptInstance> ();
+        assert (aiScript);
         Urho3D::VariantVector parameters;
         parameters.Push (aiCommands_);
+        aiCommands_->AddRef ();
         aiScript->Execute ("void WriteAiCommands (AiCommands@)", parameters);
     }
 

@@ -1,6 +1,7 @@
 #include "BuildConfiguration.hpp"
 #include "PlayersManager.hpp"
 #include "Spawner.hpp"
+#include "AiPlayerState.hpp"
 
 #include <Shared/Constants.hpp>
 #include <Urho3D/Network/NetworkEvents.h>
@@ -41,9 +42,12 @@ void PlayersManager::ProcessNameRequest (Urho3D::Connection *connection, Urho3D:
     PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
     playerState->SetName (resultingName);
 
-    Urho3D::VectorBuffer messageData;
-    messageData.WriteString (resultingName);
-    playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_NAME_SETTED, true, false, messageData);
+    if (playerState->GetConnection ())
+    {
+        Urho3D::VectorBuffer messageData;
+        messageData.WriteString (resultingName);
+        playerState->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_NAME_SETTED, true, false, messageData);
+    }
 }
 
 void PlayersManager::ProcessGetTimeUntilSpawn (Urho3D::Connection *connection)
@@ -66,7 +70,7 @@ void PlayersManager::ProcessChatMessageRequest (Urho3D::Connection *connection, 
     for (int index = 0; index < players_.Values ().Size (); index++)
     {
         PlayerState *player = players_.Values ().At (index);
-        if (player)
+        if (player && player->GetConnection ())
             player->GetConnection ()->SendMessage (NetworkMessageIds::STC_CHAT_MESSAGE, true, false, messageData);
     }
 
@@ -96,7 +100,7 @@ void PlayersManager::SendServerMessage (Urho3D::String message)
     for (int index = 0; index < players_.Values ().Size (); index++)
     {
         PlayerState *player = players_.Values ().At (index);
-        if (player)
+        if (player && player->GetConnection ())
             player->GetConnection ()->SendMessage (NetworkMessageIds::STC_SERVER_MESSAGE, true, false, messageData);
     }
 }
@@ -137,6 +141,7 @@ void PlayersManager::Setup ()
     SubscribeToEvent (Urho3D::E_UPDATE, URHO3D_HANDLER (PlayersManager, Update));
     SubscribeToEvent (Urho3D::StringHash ("PlayerShooted"), URHO3D_HANDLER (PlayersManager, OnPlayerShooted));
     SubscribeToEvent (Urho3D::StringHash ("RequestServerMessage"), URHO3D_HANDLER (PlayersManager, OnServerMessageRequest));
+    SubscribeToEvent (Urho3D::StringHash ("CreateAiPlayer"), URHO3D_HANDLER (PlayersManager, OnCreateAiPlayerRequest));
 }
 
 void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -214,7 +219,8 @@ void PlayersManager::RequestRespawn (PlayerState *requester, bool isAi, int aiTy
 
     Urho3D::VectorBuffer messageData;
     messageData.WriteUInt (id);
-    requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_SPAWNED, true, false, messageData);
+    if (requester->GetConnection ())
+        requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_SPAWNED, true, false, messageData);
     SendServerMessage (requester->GetName () + " respawned!");
 }
 
@@ -288,5 +294,16 @@ void PlayersManager::OnServerMessageRequest (Urho3D::StringHash eventType, Urho3
 {
     Urho3D::String message = eventData [Urho3D::StringHash ("Message")].GetString ();
     SendServerMessage (message);
+}
+
+void PlayersManager::OnCreateAiPlayerRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    int aiType = eventData [Urho3D::StringHash ("AiType")].GetInt ();
+    Urho3D::String requestedName = eventData [Urho3D::StringHash ("Name")].GetString ();
+    AiPlayerState *playerState = new AiPlayerState (this, aiType);
+
+    Urho3D::String resultingName = CreateUniqueName (requestedName);
+    playerState->SetName (resultingName);
+    players_ [Urho3D::StringHash (resultingName)] = playerState;
 }
 

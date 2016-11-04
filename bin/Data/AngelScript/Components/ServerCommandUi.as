@@ -163,6 +163,7 @@ class ServerCommandUi : ScriptObject
         eventData ["Message"] = messageEdit_.text;
         SendEvent ("RequestServerMessage", eventData);
         
+        // TODO: It better to add special event for new server message. It will allow to see some automatic messages such as kills and respawns.
         messageEdit_.selected = false;
         messageEdit_.focus = false;
         chatHistory_.Push ("{" + time.timeStamp.Substring (11, 8) +

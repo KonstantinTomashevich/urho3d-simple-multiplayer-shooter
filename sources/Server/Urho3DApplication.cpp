@@ -66,6 +66,15 @@ void Urho3DApplication::Start ()
 
     // Start server
     GetSubsystem <Urho3D::Network> ()->StartServer (ServerConstants::PORT);
+
+    // TODO: Some temporary code for testing ai. Spawn 20 easy ais.
+    for (int index = 0; index < 20; index++)
+    {
+        Urho3D::VariantMap eventData;
+        eventData [Urho3D::StringHash ("AiType")] = ServerConstants::AI_TYPE_EASY;
+        eventData [Urho3D::StringHash ("Name")] = Urho3D::String ("Floory");
+        SendEvent (Urho3D::StringHash ("CreateAiPlayer"), eventData);
+    }
 }
 
 void Urho3DApplication::Stop ()

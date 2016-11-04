@@ -207,7 +207,7 @@ unsigned Spawner::SpawnPlayer (bool isAi, int aiType)
 
     if (isAi && aiType >= 0)
     {
-        Urho3D::ScriptInstance *aiScript = scene->CreateComponent <Urho3D::ScriptInstance> (Urho3D::LOCAL);
+        Urho3D::ScriptInstance *aiScript = playerNode->CreateComponent <Urho3D::ScriptInstance> (Urho3D::LOCAL);
         if (aiType == ServerConstants::AI_TYPE_EASY)
             aiScript->CreateObject (resourceCache->GetResource <Urho3D::ScriptFile> (
                                         ServerConstants::EASY_AI_SCRIPT), "Ai");

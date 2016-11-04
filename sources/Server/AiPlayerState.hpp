@@ -20,7 +20,7 @@ class AiPlayerState : public PlayerState
 protected:
     AiCommands *aiCommands_;
 public:
-    AiPlayerState (PlayersManager *manager, Urho3D::Connection *connection, int aiType);
+    AiPlayerState (PlayersManager *manager, int aiType);
     virtual ~AiPlayerState ();
     virtual void Update (float timeStep);
 };

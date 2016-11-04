@@ -35,4 +35,5 @@ public:
     void OnNetworkMessage (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnServerMessageRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void OnCreateAiPlayerRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
 };
