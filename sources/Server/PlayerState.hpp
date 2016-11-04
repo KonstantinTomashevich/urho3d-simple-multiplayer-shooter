@@ -21,13 +21,15 @@ protected:
 
     int deaths_;
     int kills_;
+
+    bool isAi_;
+    int aiType_;
 public:
     PlayerState (PlayersManager *manager, Urho3D::Connection *connection);
     virtual ~PlayerState ();
 
-    // TODO: Update will be virtual. It needed for AIPlayerState implementantion.
-    void Update (float timeStep);
-    void TryToFire (Spawner *spawner);
+    virtual void Update (float timeStep);
+    void TryToFire ();
     Urho3D::Connection *GetConnection ();
 
     float GetTimeFromLastFire ();
@@ -51,5 +53,5 @@ public:
 
     float GetShellDamage ();
     // Returns true if player survived, otherwise false.
-    bool ApplyDamage(float damage);
+    bool ApplyDamage (float damage);
 };

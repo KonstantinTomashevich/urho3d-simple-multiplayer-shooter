@@ -6,6 +6,7 @@
 #include <Shared/Constants.hpp>
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Core/Context.h>
 
 PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connection) :
     manager_ (manager),
@@ -16,7 +17,9 @@ PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connectio
     node_ (0),
     timeBeforeSpawn_ (GameplayConstants::RESPAWN_TIME),
     deaths_ (0),
-    kills_ (0)
+    kills_ (0),
+    isAi_ (false),
+    aiType_ (-1)
 {
     assert (manager);
     assert (connection);
@@ -44,7 +47,7 @@ void PlayerState::Update (float timeStep)
                 timeBeforeSpawn_ -= timeStep;
             else
             {
-                manager_->RequestRespawn (this);
+                manager_->RequestRespawn (this, isAi_, aiType_);
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::BASIC_MAX_HEALTH);
                 node_->SetVar (SerializationConstants::NAME_VAR_HASH, Urho3D::Variant (name_));
                 node_->SetVar (SerializationConstants::EXP_VAR_HASH, Urho3D::Variant (0));
@@ -86,8 +89,9 @@ void PlayerState::Update (float timeStep)
     }
 }
 
-void PlayerState::TryToFire (Spawner *spawner)
+void PlayerState::TryToFire ()
 {
+    Spawner *spawner = manager_->GetContext ()->GetSubsystem <Spawner> ();
     if (timeFromLastFire_ >= GameplayConstants::FIRE_COOLDOWN_TIME)
     {
         assert (spawner);

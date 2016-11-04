@@ -11,6 +11,17 @@ const int TIME_BEFORE_AUTOMATIC_NAMING = 1.0f;
 const float MINIMUM_DISTANCE_BETWEEN_OBSTACLES = 10.0f;
 const int MINIMUM_OBSTACLES_COUNT = 5;
 const int MAXIMUM_OBSTACLES_COUNT = 25;
+
+enum AiTypes
+{
+    AI_TYPE_EASY = 0,
+    AI_TYPE_MEDIUM = 1,
+    AI_TYPE_HARD = 2
+};
+
+const Urho3D::String EASY_AI_SCRIPT ("AngelScript/Components/EasyAi.as");
+const Urho3D::String MEDIUM_AI_SCRIPT ("AngelScript/Components/MediumAi.as");
+const Urho3D::String HARD_AI_SCRIPT ("AngelScript/Components/HardAi.as");
 }
 
 namespace GameplayConstants

@@ -86,7 +86,7 @@ void PlayersManager::ProcessSetMoveRequest (Urho3D::Connection *connection, Urho
 void PlayersManager::ProcessFireRequest (Urho3D::Connection *connection)
 {
     PlayerState *playerState = players_ [Urho3D::StringHash (connection->ToString ())];
-    playerState->TryToFire (context_->GetSubsystem <Spawner> ());
+    playerState->TryToFire ();
 }
 
 void PlayersManager::SendServerMessage (Urho3D::String message)
@@ -201,7 +201,7 @@ void PlayersManager::RequestName (PlayerState *requester)
     requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_NAME_SETTED, true, false, messageData);
 }
 
-void PlayersManager::RequestRespawn (PlayerState *requester)
+void PlayersManager::RequestRespawn (PlayerState *requester, bool isAi, int aiType)
 {
     assert (!requester->GetNode ());
     assert (requester->GetTimeBeforeSpawn () <= 0);
@@ -209,7 +209,7 @@ void PlayersManager::RequestRespawn (PlayerState *requester)
     Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
     assert (scene);
     Spawner *spawner = context_->GetSubsystem <Spawner> ();
-    unsigned id = spawner->SpawnPlayer ();
+    unsigned id = spawner->SpawnPlayer (isAi, aiType);
     requester->SetNode (scene->GetNode (id));
 
     Urho3D::VectorBuffer messageData;

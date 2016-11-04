@@ -34,6 +34,10 @@ GETTER (int, TIME_BEFORE_AUTOMATIC_NAMING)
 GETTER (float, MINIMUM_DISTANCE_BETWEEN_OBSTACLES)
 GETTER (int, MINIMUM_OBSTACLES_COUNT)
 GETTER (int, MAXIMUM_OBSTACLES_COUNT)
+
+GETTER (Urho3D::String, EASY_AI_SCRIPT)
+GETTER (Urho3D::String, MEDIUM_AI_SCRIPT)
+GETTER (Urho3D::String, HARD_AI_SCRIPT)
 }
 
 namespace GameplayConstants
@@ -87,6 +91,10 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, ServerConstants, MINIMUM_OBSTACLES_COUNT);
     BIND_CONSTANT (engine, int, ServerConstants, MAXIMUM_OBSTACLES_COUNT);
 
+    BIND_CONSTANT (engine, String, ServerConstants, EASY_AI_SCRIPT);
+    BIND_CONSTANT (engine, String, ServerConstants, MEDIUM_AI_SCRIPT);
+    BIND_CONSTANT (engine, String, ServerConstants, HARD_AI_SCRIPT);
+
     BIND_CONSTANT (engine, int, GameplayConstants, RESPAWN_TIME);
     BIND_CONSTANT (engine, int, GameplayConstants, HEALTH_REGENERATION);
     BIND_CONSTANT (engine, int, GameplayConstants, BASIC_MAX_HEALTH);
@@ -132,4 +140,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_FIRE", NetworkMessageIds::CTS_REQUEST_FIRE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_REQUEST_CHAT_MESSAGE", NetworkMessageIds::CTS_REQUEST_CHAT_MESSAGE);
     engine->RegisterEnumValue ("NetworkMessageId", "NMID_CTS_GET_TIME_UNTIL_SPAWN", NetworkMessageIds::CTS_GET_TIME_UNTIL_SPAWN);
+
+    engine->RegisterEnum ("AiType");
+    engine->RegisterEnumValue ("AiType", "AI_TYPE_EASY", ServerConstants::AI_TYPE_EASY);
+    engine->RegisterEnumValue ("AiType", "AI_TYPE_MEDIUM", ServerConstants::AI_TYPE_MEDIUM);
+    engine->RegisterEnumValue ("AiType", "AI_TYPE_HARD", ServerConstants::AI_TYPE_HARD);
 }

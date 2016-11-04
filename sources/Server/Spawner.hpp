@@ -23,7 +23,7 @@ public:
     float GetMinimumDistanceBetween (Urho3D::Vector3 position, Urho3D::PODVector <Urho3D::Vector3> &others);
     void GenerateObstacles (int count);
     void AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion rotation);
-    unsigned SpawnPlayer ();
+    unsigned SpawnPlayer (bool isAi, int aiType);
 
     void SpawnExplossion (Urho3D::Vector3 position);
     void OnExplossion (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);

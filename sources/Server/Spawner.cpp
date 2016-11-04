@@ -175,7 +175,7 @@ void Spawner::AddStandartObstacle (Urho3D::Vector3 position, Urho3D::Quaternion 
     placedObstacles_.Push (position);
 }
 
-unsigned Spawner::SpawnPlayer ()
+unsigned Spawner::SpawnPlayer (bool isAi, int aiType)
 {
     Urho3D::Vector3 position;
     float minimumDistance;
@@ -204,6 +204,20 @@ unsigned Spawner::SpawnPlayer ()
     Urho3D::SharedPtr <Urho3D::CollisionShape> shape (playerLocal->GetComponent <Urho3D::CollisionShape> ());
     shape->Remove ();
     playerNode->AddComponent (shape.Get (), Urho3D::FIRST_LOCAL_ID, Urho3D::LOCAL);
+
+    if (isAi && aiType >= 0)
+    {
+        Urho3D::ScriptInstance *aiScript = scene->CreateComponent <Urho3D::ScriptInstance> (Urho3D::LOCAL);
+        if (aiType == ServerConstants::AI_TYPE_EASY)
+            aiScript->CreateObject (resourceCache->GetResource <Urho3D::ScriptFile> (
+                                        ServerConstants::EASY_AI_SCRIPT), "Ai");
+        else if (aiType == ServerConstants::AI_TYPE_MEDIUM)
+            aiScript->CreateObject (resourceCache->GetResource <Urho3D::ScriptFile> (
+                                        ServerConstants::MEDIUM_AI_SCRIPT), "Ai");
+        else
+            aiScript->CreateObject (resourceCache->GetResource <Urho3D::ScriptFile> (
+                                        ServerConstants::HARD_AI_SCRIPT), "Ai");
+    }
     return playerNode->GetID ();
 }
 

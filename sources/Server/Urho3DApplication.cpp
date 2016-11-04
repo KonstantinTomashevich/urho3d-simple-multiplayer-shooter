@@ -1,5 +1,6 @@
 #include "BuildConfiguration.hpp"
 #include "Urho3DApplication.hpp"
+#include "AiPlayerState.hpp"
 #include <Shared/Constants.hpp>
 
 #include <Urho3D/Input/Input.h>
@@ -47,6 +48,7 @@ void Urho3DApplication::Start ()
     Urho3D::Script *script = new Urho3D::Script (context_);
     context_->RegisterSubsystem (script);
     BindConstantsToAngelScript (script);
+    AiCommands::BindToAngelScript (script);
 
     // Add spawner and generate scene.
     Urho3D::SetRandomSeed (Urho3D::Time::GetTimeSinceEpoch ());
