@@ -37,7 +37,8 @@ class Shell : ScriptObject
             else
                 otherNode = nodeA;
             
-            if (otherNode.vars ["ObjectType"].GetInt () == 
+            if (otherNode !is null and 
+                otherNode.vars ["ObjectType"].GetInt () == 
                 SerializationConstants__OBJECT_TYPE_PLAYER and
                 not otherNode.HasTag ("Died"))
             {

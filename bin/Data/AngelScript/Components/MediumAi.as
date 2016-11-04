@@ -62,7 +62,7 @@ class Ai : ScriptObject
         ray.direction = node.worldRotation * Vector3 (0, 0, 1);
         
         PhysicsRaycastResult result = 
-        physicsWorld.RaycastSingle (ray, 40.0f);
+            physicsWorld.RaycastSingle (ray, 40.0f);
             
         if (result.body !is null and 
             result.body.node.vars ["ObjectType"].GetInt () ==
