@@ -61,6 +61,7 @@ class ServerCommandUi : ScriptObject
         
         SubscribeToEvent ("UIMouseClickEnd", "HandleUiMouseClickEnd");
         SubscribeToEvent ("NewChatMessage", "HandleNewChatMessage");
+        SubscribeToEvent ("NewServerMessage", "HandleNewServerMessage");
     }
     
     void Update (float timeStep)
@@ -163,11 +164,8 @@ class ServerCommandUi : ScriptObject
         eventData ["Message"] = messageEdit_.text;
         SendEvent ("RequestServerMessage", eventData);
         
-        // TODO: It better to add special event for new server message. It will allow to see some automatic messages such as kills and respawns.
         messageEdit_.selected = false;
         messageEdit_.focus = false;
-        chatHistory_.Push ("{" + time.timeStamp.Substring (11, 8) +
-                           " Server} : " + messageEdit_.text);
         messageEdit_.text = "";
     }
     
@@ -176,5 +174,11 @@ class ServerCommandUi : ScriptObject
         chatHistory_.Push ("[" + time.timeStamp.Substring (11, 8) + " " + 
                            eventData ["Sender"].GetString () + "]" +
                             " : " + eventData ["Message"].GetString ());
+    }
+    
+    void HandleNewServerMessage (StringHash eventType, VariantMap &eventData)
+    {
+        chatHistory_.Push ("{" + time.timeStamp.Substring (11, 8) +
+                           " Server} : " + eventData ["Message"].GetString ());
     }
 }

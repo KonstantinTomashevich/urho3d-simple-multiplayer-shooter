@@ -15,7 +15,7 @@ PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connectio
     name_ (Urho3D::String::EMPTY),
     timeBeforeAutomaticNaming_ (ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING),
     node_ (0),
-    timeBeforeSpawn_ (GameplayConstants::RESPAWN_TIME),
+    timeBeforeSpawn_ (ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING * 2.0f),
     deaths_ (0),
     kills_ (0),
     isAi_ (false),

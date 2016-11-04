@@ -103,6 +103,10 @@ void PlayersManager::SendServerMessage (Urho3D::String message)
         if (player && player->GetConnection ())
             player->GetConnection ()->SendMessage (NetworkMessageIds::STC_SERVER_MESSAGE, true, false, messageData);
     }
+
+    Urho3D::VariantMap newServerMessageEventData;
+    newServerMessageEventData [Urho3D::StringHash ("Message")] = message;
+    SendEvent (Urho3D::StringHash ("NewServerMessage"), newServerMessageEventData);
 }
 
 PlayerState *PlayersManager::GetPlayerByName (Urho3D::String name)

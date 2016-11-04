@@ -65,13 +65,16 @@ class Ai : ScriptObject
             ray.direction = node.worldRotation * Vector3 (0, 0, 1);
                       
             PhysicsRaycastResult result = 
-                physicsWorld.RaycastSingle (ray, 200.0f);
+                physicsWorld.RaycastSingle (ray, 40.0f);
             
             if (result.body !is null and 
                 result.body.node.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
                 not result.body.node.HasTag ("Died"))
-                    tryToFireInNextFrame_ = true;  
+                
+                tryToFireInNextFrame_ = true; 
+            else
+                tryToFireInNextFrame_ = false;   
                        
             timeFromLastShotRaycasting_ = 0.0f;
         }
