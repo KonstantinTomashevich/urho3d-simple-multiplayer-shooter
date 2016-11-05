@@ -11,7 +11,9 @@ class ServerCommandUi : ScriptObject
     protected Button @sendMessageButton_;
     protected Text @sendMessageButtonText_;
     protected LineEdit @messageEdit_;
+    protected Array <Text @> otherPlayersLabels_;
     
+    protected int PROPERTY_OTHER_PLAYERS_LABELS_POOL_SIZE = 40;
     protected int PROPERTY_KEY_SWITCH_INPUT_CHAT_MESSAGE = KEY_TAB;
     protected int PROPERTY_KEY_SEND_CHAT_MESSAGE = KEY_RETURN;
 
@@ -59,6 +61,15 @@ class ServerCommandUi : ScriptObject
         sendMessageButtonText_.SetStyleAuto (styles_);
         sendMessageButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
         
+        for (int index = 0; index < PROPERTY_OTHER_PLAYERS_LABELS_POOL_SIZE; index++)
+        {
+            Text @label = rootElement_.CreateChild ("Text", "other_player_label_" + index);
+            label.text = "...";
+            label.SetStyleAuto (styles_);
+            label.color = Color (0.3f, 0.8f, 0.3f);
+            otherPlayersLabels_.Push (label);
+        }
+        
         SubscribeToEvent ("UIMouseClickEnd", "HandleUiMouseClickEnd");
         SubscribeToEvent ("NewChatMessage", "HandleNewChatMessage");
         SubscribeToEvent ("NewServerMessage", "HandleNewServerMessage");
@@ -73,6 +84,7 @@ class ServerCommandUi : ScriptObject
             ResizeUi (lastScreenSize.x, lastScreenSize.y);
         }
         UpdateChat ();
+        UpdatePlayersLabels ();
         HandleKeyboard (timeStep);
     }
     
@@ -151,6 +163,79 @@ class ServerCommandUi : ScriptObject
             cameraNode_.position = cameraNode_.position + move;
         }
     }
+    
+    void UpdatePlayersLabels ()
+    {
+        Array <Node @> sceneNodes = scene.GetChildren (true);
+        Array <Node @> otherPlayersNodes;
+        Camera @camera = cameraNode_.GetComponent ("Camera");
+        
+        for (int index = 0; index < sceneNodes.length; index++)
+        {
+            Node @processingNode = sceneNodes [index];
+            if (processingNode.id < FIRST_LOCAL_ID and
+                processingNode.id != node.id and
+                processingNode.vars ["ObjectType"].GetInt () ==
+                SerializationConstants__OBJECT_TYPE_PLAYER)
+                {
+                    Vector2 screenPoint = camera.WorldToScreenPoint (processingNode.worldPosition);
+                    if (screenPoint.x > 0.0f and screenPoint.x < 1.0f and
+                        screenPoint.y > 0.0f and screenPoint.y < 1.0f)
+                        otherPlayersNodes.Push (processingNode);
+                }
+        }
+                    
+        for (int index = 0; index < otherPlayersLabels_.length; index++)
+        {
+            Text @label = otherPlayersLabels_ [index];
+            if (index < otherPlayersNodes.length)
+            {
+                Node @otherPlayerNode = otherPlayersNodes [index];
+                String labelText = 
+                    otherPlayerNode.vars [SerializationConstants__NAME_VAR_HASH].
+                        GetString () + "\n";
+                    
+                if (not otherPlayerNode.HasTag ("Died"))
+                {    
+                    int otherPlayerLives = Floor (otherPlayerNode.vars 
+                                                  [SerializationConstants__HEALTH_VAR_HASH].
+                                                  GetFloat ());
+                    int otherPlayerExp = otherPlayerNode.vars 
+                                         [SerializationConstants__EXP_VAR_HASH].GetInt ();
+                    int OtherPlayerMaxLives = Floor (GameplayConstants__BASIC_MAX_HEALTH *
+                                              (1.0f + otherPlayerExp * 
+                                              GameplayConstants__MAX_HEALTH_INCREASE_PER_EXP));
+                        
+                    labelText += otherPlayerLives + "/" + OtherPlayerMaxLives + " HP.\n" +
+                                 otherPlayerExp + " EXP.";
+                }
+                else
+                    labelText += "[Died]";
+                        
+                label.text = labelText;
+                label.visible = true;
+                
+                float distance = (cameraNode_.position - otherPlayerNode.position).length;
+                Vector2 labelPosition = 
+                    camera.WorldToScreenPoint (otherPlayerNode.position + Vector3 (0, 1.5f, 0));
+                        
+                if (distance > 7.0f)
+                {
+                    label.fontSize = Floor (graphics.height * 0.1f * 7.0f / distance);
+                    labelPosition.x -= Floor (0.08f * 7.0f / distance);
+                }
+                else
+                {
+                    label.fontSize = Floor (graphics.height * 0.1f);
+                    labelPosition.x -= Floor (0.08f * 7.0f);
+                }
+                label.SetPosition (graphics.width * labelPosition.x,
+                                   graphics.height * labelPosition.y);
+            }
+            else
+                label.visible = false;
+        }
+        }
     
     void HandleUiMouseClickEnd (StringHash eventType, VariantMap &eventData)
     {
