@@ -50,6 +50,7 @@ public:
 
     int GetDeaths ();
     void IncrementDeaths ();
+    void ClearStatistics ();
 
     float GetShellDamage ();
     // Returns true if player survived, otherwise false.

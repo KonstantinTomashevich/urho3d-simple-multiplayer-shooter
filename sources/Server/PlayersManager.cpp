@@ -9,6 +9,7 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Core/Context.h>
+#include <map>
 
 Urho3D::String PlayersManager::CreateUniqueName (Urho3D::String requestedName)
 {
@@ -120,6 +121,93 @@ PlayerState *PlayersManager::GetPlayerByName (Urho3D::String name)
     return 0;
 }
 
+void PlayersManager::UpdateAllPlayers (float timeStep)
+{
+    for (int index = 0; index < players_.Values ().Size (); index++)
+    {
+        PlayerState *playerState = players_.Values ().At (index);
+        playerState->Update (timeStep);
+    }
+}
+
+void PlayersManager::RemoveDiedPlayersNodes (float timeStep)
+{
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::PODVector <Urho3D::Node *> nodes;
+    scene->GetChildren (nodes, true);
+
+    for (int index = 0; index < nodes.Size (); index++)
+    {
+        Urho3D::Node *node = nodes.At (index);
+        if (node->GetID () < Urho3D::FIRST_LOCAL_ID &&
+                node->GetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH).GetInt () ==
+                SerializationConstants::OBJECT_TYPE_PLAYER &&
+                node->GetVar (SerializationConstants::HEALTH_VAR_HASH).GetFloat () < 0.0f)
+        {
+            if (node->HasTag ("Died"))
+            {
+                float timeBeforeRemove = node->GetVar (Urho3D::StringHash ("timeBeforeRemove")).GetFloat ();
+                timeBeforeRemove -= timeStep;
+                if (timeBeforeRemove < 0)
+                    node->Remove ();
+                else
+                    node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), timeBeforeRemove);
+            }
+            else
+            {
+                node->AddTag ("Died");
+                node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), GameplayConstants::DEAD_PLAYERS_REMOVE_TIME);
+            }
+        }
+    }
+}
+
+void PlayersManager::RecalculateLeaderboard ()
+{
+    Urho3D::HashMap <HashableFloat, PlayerState *> playersPoints;
+    for (int index = 0; index < players_.Values ().Size (); index++)
+    {
+        PlayerState *player = players_.Values ().At (index);
+        float points = -player->GetDeaths ();
+
+        if (player->GetDeaths () > 0)
+            points += 500.0f * (player->GetKills () * 1.0f / (player->GetDeaths () + 1.0f));
+        else
+            points += 500.0f * (player->GetKills () / 0.7f);
+
+        if (player->GetNode ())
+            points += 25.0f * player->GetNode ()->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ();
+
+        points += Urho3D::Random ();
+        playersPoints [points] = player;
+    }
+
+    playersPoints.Sort ();
+    Urho3D::VariantVector leaderboardData;
+    // Iterate from end of map because numbers in hash map are sorted from smallest to biggest.
+    for (int index = playersPoints.Values ().Size () - 1; index > 0; index--)
+    {
+        PlayerState *player = playersPoints.Values ().At (index);
+        float points = playersPoints.Keys ().At (index).value_;
+
+        Urho3D::String informationString;
+        informationString += player->GetName () + ";";
+        informationString += Urho3D::String (player->GetKills ()) + ";";
+        informationString += Urho3D::String (player->GetDeaths ()) + ";";
+        if (player->GetNode ())
+            informationString += Urho3D::String (player->GetNode ()->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ()) + ";";
+        else
+            informationString += "0;";
+        informationString += Urho3D::String (Urho3D::Floor (points)) + ";";
+        leaderboardData.Push (informationString);
+    }
+
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    scene->SetVar (Urho3D::StringHash ("Leaderboard"), leaderboardData);
+}
+
 PlayersManager::PlayersManager (Urho3D::Context *context) :
     Urho3D::Object (context),
     players_ ()
@@ -151,41 +239,9 @@ void PlayersManager::Setup ()
 void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
 {
     float timeStep = eventData [Urho3D::Update::P_TIMESTEP].GetFloat ();
-    for (int index = 0; index < players_.Values ().Size (); index++)
-    {
-        PlayerState *playerState = players_.Values ().At (index);
-        playerState->Update (timeStep);
-    }
-
-    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
-    assert (scene);
-    Urho3D::PODVector <Urho3D::Node *> nodes;
-    scene->GetChildren (nodes, true);
-
-    for (int index = 0; index < nodes.Size (); index++)
-    {
-        Urho3D::Node *node = nodes.At (index);
-        if (node->GetID () < Urho3D::FIRST_LOCAL_ID &&
-                node->GetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH).GetInt () ==
-                SerializationConstants::OBJECT_TYPE_PLAYER &&
-                node->GetVar (SerializationConstants::HEALTH_VAR_HASH).GetFloat () < 0.0f)
-        {
-            if (node->HasTag ("Died"))
-            {
-                float timeBeforeRemove = node->GetVar (Urho3D::StringHash ("timeBeforeRemove")).GetFloat ();
-                timeBeforeRemove -= timeStep;
-                if (timeBeforeRemove < 0)
-                    node->Remove ();
-                else
-                    node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), timeBeforeRemove);
-            }
-            else
-            {
-                node->AddTag ("Died");
-                node->SetVar (Urho3D::StringHash ("timeBeforeRemove"), GameplayConstants::DEAD_PLAYERS_REMOVE_TIME);
-            }
-        }
-    }
+    UpdateAllPlayers (timeStep);
+    RemoveDiedPlayersNodes (timeStep);
+    RecalculateLeaderboard ();
 }
 
 void PlayersManager::Reset ()
@@ -311,3 +367,38 @@ void PlayersManager::OnCreateAiPlayerRequest (Urho3D::StringHash eventType, Urho
     players_ [Urho3D::StringHash (resultingName)] = playerState;
 }
 
+
+HashableFloat::HashableFloat (float value) : value_ (value)
+{
+
+}
+
+HashableFloat::~HashableFloat ()
+{
+
+}
+
+unsigned HashableFloat::ToHash () const
+{
+    return ((unsigned) Urho3D::Floor (value_ * 1000));
+}
+
+bool HashableFloat::operator > (const HashableFloat &other) const
+{
+    return value_ > other.value_;
+}
+
+bool HashableFloat::operator < (const HashableFloat &other) const
+{
+    return value_ < other.value_;
+}
+
+bool HashableFloat::operator == (const HashableFloat &other) const
+{
+    return value_ == other.value_;
+}
+
+bool HashableFloat::operator != (const HashableFloat &other) const
+{
+    return value_ != other.value_;
+}

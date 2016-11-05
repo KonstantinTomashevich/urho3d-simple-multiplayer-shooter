@@ -53,16 +53,16 @@ class Ai : ScriptObject
             normalizedMoveRequest_.x = 0.0f;
             
         if (position.x > 35.0f)
-            normalizedMoveRequest_.y = 0.35f;
+            normalizedMoveRequest_.y = 0.25f;
         else if (position.x > 15.0f)
-            normalizedMoveRequest_.y = 0.6f;
+            normalizedMoveRequest_.y = 0.5f;
+        else if (position.x > 0.0f) 
+            normalizedMoveRequest_.y = 1.0f;
+            
         if (position.x < -35.0f)
             normalizedMoveRequest_.y = -0.25f;
-                
-        if (position.x < -35.0f)
-            normalizedMoveRequest_.y = -0.35f;
         else if (position.x < -15.0f)
-            normalizedMoveRequest_.y = -0.6f;
+            normalizedMoveRequest_.y = -0.5f;
         else if (position.x < -0.0f) 
             normalizedMoveRequest_.y = -1.0f;
     }

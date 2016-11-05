@@ -2,6 +2,21 @@
 #include <Urho3D/Core/Object.h>
 #include "PlayerState.hpp"
 
+class HashableFloat
+{
+public:
+    float value_;
+
+    HashableFloat (float value = 0.0f);
+    virtual ~HashableFloat ();
+
+    unsigned ToHash () const;
+    bool operator > (const HashableFloat &other) const;
+    bool operator < (const HashableFloat &other) const;
+    bool operator == (const HashableFloat &other) const;
+    bool operator != (const HashableFloat &other) const;
+};
+
 class PlayersManager : public Urho3D::Object
 {
 URHO3D_OBJECT (PlayersManager, Object)
@@ -18,11 +33,15 @@ protected:
 
     void SendServerMessage (Urho3D::String message);
     PlayerState *GetPlayerByName (Urho3D::String name);
+
+    void UpdateAllPlayers (float timeStep);
+    void RemoveDiedPlayersNodes (float timeStep);
+    void RecalculateLeaderboard ();
 public:
     PlayersManager (Urho3D::Context *context);
     virtual ~PlayersManager ();
 
-    Urho3D::HashMap<Urho3D::StringHash, PlayerState *> *GetPlayers();
+    Urho3D::HashMap <Urho3D::StringHash, PlayerState *> *GetPlayers();
     void Setup ();
     void Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void Reset ();

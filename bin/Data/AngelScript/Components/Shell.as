@@ -37,6 +37,8 @@ class Shell : ScriptObject
             else
                 otherNode = nodeA;
             
+            // TODO: Not all shots are reported!
+            
             if (otherNode !is null and 
                 otherNode.vars ["ObjectType"].GetInt () == 
                 SerializationConstants__OBJECT_TYPE_PLAYER and

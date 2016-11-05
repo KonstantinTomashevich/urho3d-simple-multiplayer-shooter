@@ -183,6 +183,12 @@ void PlayerState::IncrementDeaths ()
     deaths_ ++;
 }
 
+void PlayerState::ClearStatistics()
+{
+    kills_ = 0;
+    deaths_ = 0;
+}
+
 float PlayerState::GetShellDamage ()
 {
     int exp = 0;

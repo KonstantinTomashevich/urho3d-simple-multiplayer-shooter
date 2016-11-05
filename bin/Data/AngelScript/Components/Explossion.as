@@ -12,6 +12,7 @@ class Explossion : ScriptObject
     
     void Start ()
     {
+        // TODO: I'm not sure that finished particle effects are removed.
         SubscribeToEvent ("ParticleEffectFinished", "HandleParticleEffectFinished");
     }
     
