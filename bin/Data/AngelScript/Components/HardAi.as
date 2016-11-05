@@ -17,6 +17,7 @@ class Ai : ScriptObject
                 processingNode.id != node.id and
                 processingNode.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
+                not processingNode.HasTag ("Died") and
                 (processingNode.position - node.position).length < 30.0f)
                 
                 enemiesNear.Push (processingNode);

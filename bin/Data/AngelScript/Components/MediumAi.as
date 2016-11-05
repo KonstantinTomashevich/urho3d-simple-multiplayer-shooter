@@ -17,6 +17,7 @@ class Ai : ScriptObject
             if (processingNode.id < FIRST_LOCAL_ID and
                 processingNode.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
+                not processingNode.HasTag ("Died") and
                 (processingNode.position - node.position).length < 40.0f)
             {
                 Vector3 localPosition = node.WorldToLocal (processingNode.worldPosition);
