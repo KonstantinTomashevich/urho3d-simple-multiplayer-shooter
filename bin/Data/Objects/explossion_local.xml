@@ -10,12 +10,6 @@
 	<component type="ParticleEmitter" id="16777240">
 		<attribute name="Effect" value="ParticleEffect;Particles/explossion.xml" />
 		<attribute name="Animation LOD Bias" value="0" />
-		<attribute name="Particles">
-			<variant type="Int" value="50" />
-		</attribute>
-		<attribute name="Billboards">
-			<variant type="Int" value="50" />
-		</attribute>
 		<attribute name="Serialize Particles" value="false" />
 	</component>
 	<component type="ScriptInstance" id="16777241">
