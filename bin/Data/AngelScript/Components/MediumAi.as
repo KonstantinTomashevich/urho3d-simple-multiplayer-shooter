@@ -41,16 +41,16 @@ class Ai : ScriptObject
                 
             if (nearestVisibleEnemy.x > 35.0f)
                 normalizedMoveRequest_.y = 0.25f;
-            else if (nearestVisibleEnemy.z > 15.0f)
+            else if (nearestVisibleEnemy.x > 15.0f)
                 normalizedMoveRequest_.y = 0.5f;
-            else if (nearestVisibleEnemy.z > 0.0f) 
+            else if (nearestVisibleEnemy.x > 0.0f) 
                 normalizedMoveRequest_.y = 1.0f;
                     
             if (nearestVisibleEnemy.x < -35.0f)
                 normalizedMoveRequest_.y = -0.25f;
-            else if (nearestVisibleEnemy.z < -15.0f)
+            else if (nearestVisibleEnemy.x < -15.0f)
                 normalizedMoveRequest_.y = -0.5f;
-            else if (nearestVisibleEnemy.z < -0.0f) 
+            else if (nearestVisibleEnemy.x < -0.0f) 
                 normalizedMoveRequest_.y = -1.0f;
         }
     }

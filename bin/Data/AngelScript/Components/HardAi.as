@@ -53,17 +53,17 @@ class Ai : ScriptObject
             normalizedMoveRequest_.x = 0.0f;
             
         if (position.x > 35.0f)
-            normalizedMoveRequest_.y = 0.25f;
-        else if (position.z > 15.0f)
-            normalizedMoveRequest_.y = 0.5f;
-        else if (position.z > 0.0f) 
-            normalizedMoveRequest_.y = 1.0f;
-                
+            normalizedMoveRequest_.y = 0.35f;
+        else if (position.x > 15.0f)
+            normalizedMoveRequest_.y = 0.6f;
         if (position.x < -35.0f)
             normalizedMoveRequest_.y = -0.25f;
-        else if (position.z < -15.0f)
-            normalizedMoveRequest_.y = -0.5f;
-        else if (position.z < -0.0f) 
+                
+        if (position.x < -35.0f)
+            normalizedMoveRequest_.y = -0.35f;
+        else if (position.x < -15.0f)
+            normalizedMoveRequest_.y = -0.6f;
+        else if (position.x < -0.0f) 
             normalizedMoveRequest_.y = -1.0f;
     }
     
@@ -88,7 +88,7 @@ class Ai : ScriptObject
             {
                 int myExp = node.vars ["Exp"].GetInt ();
                 int enemyExp = processingEnemy.vars ["Exp"].GetInt ();
-                runAwayDecisionPoints += 40.0f * (10.0f + enemyExp - myExp);
+                runAwayDecisionPoints += 30.0f * (10.0f + enemyExp - myExp);
             }
         }
         return runAwayDecisionPoints;
@@ -100,12 +100,17 @@ class Ai : ScriptObject
             RunAway ();
             
         Array <float> points;
+        int myExp = node.vars ["Exp"].GetInt ();
+                    
         for (int index = 0; index < enemiesNear.length; index++)
         {
             Node @processingEnemy = enemiesNear [index];
             float decisionPoints;
+            
             decisionPoints += 150.0f / (processingEnemy.position - node.position).length;
-            decisionPoints += 250.0f - processingEnemy.vars ["Health"].GetFloat ();
+            decisionPoints += 400.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
+                                        (1 + GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP) /
+                                        processingEnemy.vars ["Health"].GetFloat ()) ;
               
             Vector3 localPosition = node.WorldToLocal (processingEnemy.worldPosition);
             decisionPoints += 200.0f * (localPosition.z / 
@@ -172,7 +177,7 @@ class Ai : ScriptObject
         timeFromLastScan_ += timeStep;
         timeFromLastShotRaycasting_ += timeStep;
         
-        if (timeFromLastScan_ > 0.5f)
+        if (timeFromLastScan_ > 0.4f)
         {
             Array <Node @> @enemies = GetEnemiesNear ();
             float runAwayPoints = CalculateRunAwayDecisionPoints (enemies);
@@ -180,7 +185,7 @@ class Ai : ScriptObject
             timeFromLastScan_ = 0.0f;
         }
         
-        if (timeFromLastShotRaycasting_ >= 0.125f)
+        if (timeFromLastShotRaycasting_ >= 0.05f)
             ShotIfItMakesSense ();
     }
     
