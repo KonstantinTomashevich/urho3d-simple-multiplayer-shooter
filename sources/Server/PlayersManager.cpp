@@ -9,7 +9,7 @@
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Core/Context.h>
-#include <map>
+#include <Urho3D/Math/MathDefs.h>
 
 Urho3D::String PlayersManager::CreateUniqueName (Urho3D::String requestedName)
 {
