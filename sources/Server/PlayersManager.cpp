@@ -163,6 +163,24 @@ void PlayersManager::RemoveDiedPlayersNodes (float timeStep)
     }
 }
 
+void PlayersManager::KillPlayersIfTheyOutIfLevelBounds ()
+{
+    Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
+    assert (scene);
+    Urho3D::PODVector <Urho3D::Node *> nodes;
+    scene->GetChildren (nodes, true);
+
+    for (int index = 0; index < nodes.Size (); index++)
+    {
+        Urho3D::Node *node = nodes.At (index);
+        if (node->GetID () < Urho3D::FIRST_LOCAL_ID &&
+                node->GetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH).GetInt () ==
+                SerializationConstants::OBJECT_TYPE_PLAYER &&
+                (node->GetWorldPosition ().y_ > 100.0f || node->GetWorldPosition ().y_ < -100.0f))
+            node->SetVar (SerializationConstants::HEALTH_VAR_HASH, Urho3D::Variant (-1.0f));
+    }
+}
+
 void PlayersManager::RecalculateLeaderboard ()
 {
     Urho3D::HashMap <HashableFloat, PlayerState *> playersPoints;
@@ -241,6 +259,7 @@ void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &e
     float timeStep = eventData [Urho3D::Update::P_TIMESTEP].GetFloat ();
     UpdateAllPlayers (timeStep);
     RemoveDiedPlayersNodes (timeStep);
+    KillPlayersIfTheyOutIfLevelBounds ();
     RecalculateLeaderboard ();
 }
 

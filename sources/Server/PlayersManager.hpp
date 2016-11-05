@@ -36,6 +36,7 @@ protected:
 
     void UpdateAllPlayers (float timeStep);
     void RemoveDiedPlayersNodes (float timeStep);
+    void KillPlayersIfTheyOutIfLevelBounds ();
     void RecalculateLeaderboard ();
 public:
     PlayersManager (Urho3D::Context *context);
