@@ -19,7 +19,7 @@ class Ai : ScriptObject
                 processingNode.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
                 not processingNode.HasTag ("Died") and
-                (processingNode.position - node.position).length < 25.0f)
+                (processingNode.position - node.position).length < 30.0f)
                 
                 enemiesNear.Push (processingNode);
         }
@@ -29,10 +29,8 @@ class Ai : ScriptObject
     protected void RunAway ()
     {
         float randomNumber = Random ();            
-        if (randomNumber < 1.0f / 3.0f)
+        if (randomNumber < 0.5f)
             normalizedMoveRequest_.x = -1.0f;
-        else if (randomNumber < 2.0f / 3.0f)
-            normalizedMoveRequest_.x = 0.0f;
         else
             normalizedMoveRequest_.x = 1.0f;
         
@@ -85,7 +83,7 @@ class Ai : ScriptObject
             {
                 int myExp = node.vars ["Exp"].GetInt ();
                 int enemyExp = processingEnemy.vars ["Exp"].GetInt ();
-                runAwayDecisionPoints += 20.0f * (10.0f + enemyExp - myExp);
+                runAwayDecisionPoints += 30.0f * (10.0f + enemyExp - myExp);
             }
         }
         return runAwayDecisionPoints;
@@ -104,7 +102,7 @@ class Ai : ScriptObject
             Node @processingEnemy = enemiesNear [index];
             float decisionPoints;
             
-            decisionPoints += 150.0f / (processingEnemy.position - node.position).length;
+            decisionPoints += 200.0f / (processingEnemy.position - node.position).length;
             decisionPoints += 500.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
                                         (1 + GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP) /
                                         processingEnemy.vars ["Health"].GetFloat ()) ;
@@ -137,7 +135,7 @@ class Ai : ScriptObject
         ray.direction = node.worldRotation * Vector3 (0, 0, 1);
         
         PhysicsRaycastResult result = 
-            physicsWorld.RaycastSingle (ray, 25.0f);
+            physicsWorld.RaycastSingle (ray, 30.0f);
             
         if (result.body !is null and 
             result.body.node.vars ["ObjectType"].GetInt () ==
