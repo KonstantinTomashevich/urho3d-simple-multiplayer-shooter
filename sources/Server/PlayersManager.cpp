@@ -199,7 +199,7 @@ void PlayersManager::RecalculateLeaderboard ()
             informationString += Urho3D::String (player->GetNode ()->GetVar (SerializationConstants::EXP_VAR_HASH).GetInt ()) + ";";
         else
             informationString += "0;";
-        informationString += Urho3D::String (Urho3D::Floor (points)) + ";";
+        informationString += Urho3D::String (floor (points)) + ";";
         leaderboardData.Push (informationString);
     }
 
@@ -380,7 +380,7 @@ HashableFloat::~HashableFloat ()
 
 unsigned HashableFloat::ToHash () const
 {
-    return ((unsigned) Urho3D::Floor (value_ * 1000));
+    return ((unsigned) floor (value_ * 1000));
 }
 
 bool HashableFloat::operator > (const HashableFloat &other) const
