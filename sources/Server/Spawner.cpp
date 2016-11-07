@@ -242,12 +242,13 @@ void Spawner::OnExplossion (Urho3D::StringHash eventType, Urho3D::VariantMap &ev
 
 void Spawner::SpawnShell (PlayerState *player)
 {
+    // TODO: Ribbon trail in shell prefab is so buggy. Remake to particle effect.
     Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
     assert (scene);
     Urho3D::Node *shellNode = scene->CreateChild ("shell", Urho3D::REPLICATED);
     shellNode->SetPosition (player->GetNode ()->LocalToWorld (Urho3D::Vector3::FORWARD * 1.5f));
     shellNode->SetVar (SerializationConstants::OBJECT_TYPE_VAR_HASH, SerializationConstants::OBJECT_TYPE_SHELL);
-    shellNode->SetVar (SerializationConstants::NAME_VAR_HASH, player->GetName ());
+    shellNode->SetVar (Urho3D::StringHash ("ShooterName"), player->GetName ());
 
     Urho3D::Node *shellLocal = shellNode->CreateChild ("local", Urho3D::LOCAL);
     Urho3D::ResourceCache *resourceCache = GetSubsystem <Urho3D::ResourceCache> ();

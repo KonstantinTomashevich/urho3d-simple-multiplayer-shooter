@@ -1,8 +1,10 @@
 class Shell : ScriptObject
 {
+    protected bool isExploded_;
+    
     Shell ()
     {
-        
+        isExploded_ = false;
     }
     
     ~Shell ()
@@ -13,6 +15,12 @@ class Shell : ScriptObject
     void Start ()
     {
         SubscribeToEvent ("PhysicsCollisionStart", "HandlePhysicsCollisionStart");
+    }
+    
+    void Update (float timeStep)
+    {
+        if (isExploded_)
+            node.parent.Remove ();
     }
     
     void Stop ()
@@ -27,17 +35,16 @@ class Shell : ScriptObject
         
         if (nodeA is node.parent or nodeB is node.parent)
         {
+            isExploded_ = true;
             VariantMap explossionEventData;
             explossionEventData ["Position"] = node.parent.position;
             SendEvent ("Explossion", explossionEventData);
             
             Node @otherNode;
-            if (nodeA is node)
+            if (nodeA.id == node.parent.id)
                 otherNode = nodeB;
             else
                 otherNode = nodeA;
-            
-            // TODO: Not all shots are reported!
             
             if (otherNode !is null and 
                 otherNode.vars ["ObjectType"].GetInt () == 
@@ -46,12 +53,11 @@ class Shell : ScriptObject
             {
                 VariantMap playerShootedEventData;
                 playerShootedEventData ["AttackerPlayerName"] = 
-                    node.parent.vars ["Name"].GetString ();
+                    node.parent.vars ["ShooterName"].GetString ();
                 playerShootedEventData ["DamagedPlayerName"] =
                     otherNode.vars ["Name"].GetString ();
                 SendEvent ("PlayerShooted", playerShootedEventData);
             }
-            node.parent.Remove ();
         }
     }
 }

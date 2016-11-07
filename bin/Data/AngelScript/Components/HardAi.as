@@ -67,7 +67,7 @@ class Ai : ScriptObject
         if (enemiesNear.empty)
             return 1.0f;
         
-        float runAwayDecisionPoints;
+        float runAwayDecisionPoints = 0.0f;
         for (int index = 0; index < enemiesNear.length; index++)
         {
             Node @processingEnemy = enemiesNear [index];
@@ -100,7 +100,7 @@ class Ai : ScriptObject
         for (int index = 0; index < enemiesNear.length; index++)
         {
             Node @processingEnemy = enemiesNear [index];
-            float decisionPoints;
+            float decisionPoints = 0.0f;
             
             decisionPoints += 200.0f / (processingEnemy.position - node.position).length;
             decisionPoints += 500.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
