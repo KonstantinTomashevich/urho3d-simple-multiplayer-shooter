@@ -4,7 +4,9 @@ class Ai : ScriptObject
     protected bool tryToFireInNextFrame_;
     protected float timeFromLastScan_;
     protected float timeFromLastShotRaycasting_;
-    protected bool isLastDecisionRunAway_;
+    protected float timeFromLastRunAwayCalculating_;
+    protected float lastDecisionPoints_;
+    protected Vector3 weakerEnemyPosition_;
     
     protected Array <Node @> @GetEnemiesNear ()
     {
@@ -19,7 +21,7 @@ class Ai : ScriptObject
                 processingNode.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
                 not processingNode.HasTag ("Died") and
-                (processingNode.position - node.position).length < 30.0f)
+                (processingNode.position - node.position).length < 25.0f)
                 
                 enemiesNear.Push (processingNode);
         }
@@ -41,7 +43,6 @@ class Ai : ScriptObject
             normalizedMoveRequest_.y = 0.0f;
         else
             normalizedMoveRequest_.y = 1.0f;
-        isLastDecisionRunAway_ = true;
     }
     
     protected void GoRightToPosition (Vector3 position)
@@ -59,7 +60,6 @@ class Ai : ScriptObject
             normalizedMoveRequest_.y = -1.0f;
         else
             normalizedMoveRequest_.y = 0.0f;
-        isLastDecisionRunAway_ = false;
     }
     
     protected float CalculateRunAwayDecisionPoints (Array <Node @> @enemiesNear)
@@ -81,18 +81,20 @@ class Ai : ScriptObject
             if (result.body !is null and 
                 result.body.node.id == node.id)
             {
-                int myExp = node.vars ["Exp"].GetInt ();
+                float myHealth = node.vars ["Health"].GetFloat ();
                 int enemyExp = processingEnemy.vars ["Exp"].GetInt ();
-                runAwayDecisionPoints += 30.0f * (10.0f + enemyExp - myExp);
+                runAwayDecisionPoints += 4.0f * ((GameplayConstants__BASIC_SHELL_DAMAGE * 
+                                                   (1.0f + enemyExp * 1.0f * GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP)
+                                                    / myHealth));
             }
         }
         return runAwayDecisionPoints;
     }
     
-    protected void GoRightToWeakerEnemyOrRunAway (Array <Node @> @enemiesNear, float runAwayDecisionPoints)
+    protected float CalculateGoRightToWeakerEnemyPoints (Array <Node @> @enemiesNear)
     {
         if (enemiesNear.empty)
-            RunAway ();
+            return -100.0f;
             
         Array <float> points;
         int myExp = node.vars ["Exp"].GetInt ();
@@ -101,15 +103,11 @@ class Ai : ScriptObject
         {
             Node @processingEnemy = enemiesNear [index];
             float decisionPoints = 0.0f;
-            
-            decisionPoints += 200.0f / (processingEnemy.position - node.position).length;
-            decisionPoints += 500.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
-                                        (1 + GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP) /
+            decisionPoints += 1000.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
+                                        (1.0f + GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP) /
                                         processingEnemy.vars ["Health"].GetFloat ()) ;
               
             Vector3 localPosition = node.WorldToLocal (processingEnemy.worldPosition);
-            decisionPoints += 200.0f * (localPosition.z / 
-                                        (processingEnemy.position - node.position).length);
             points.Push (decisionPoints);
         }
         
@@ -122,10 +120,8 @@ class Ai : ScriptObject
                 maxPointsIndex = index;
             }
         
-        if (maxPoints < runAwayDecisionPoints or maxPointsIndex == -1)
-            RunAway ();
-        else
-            GoRightToPosition (enemiesNear [maxPointsIndex].position);
+        weakerEnemyPosition_ = enemiesNear [maxPointsIndex].position;
+        return maxPoints;
     }
     
     protected void ShotIfItMakesSense ()
@@ -164,25 +160,38 @@ class Ai : ScriptObject
         normalizedMoveRequest_ = Vector2 (0, 0);
         tryToFireInNextFrame_ = false;
         timeFromLastScan_ = 0.4f;
-        timeFromLastShotRaycasting_ = 0.0f;
+        timeFromLastShotRaycasting_ = 1.0f;
+        timeFromLastRunAwayCalculating_ = 1.0f;
     }
     
     void Update (float timeStep)
     {
-        timeFromLastScan_ += timeStep;
-        timeFromLastShotRaycasting_ += timeStep;
-        
-        if ((timeFromLastScan_ > 0.2f and not isLastDecisionRunAway_) or
-            timeFromLastScan_ > 0.75f)
+        if (not node.HasTag ("Died"))
         {
-            Array <Node @> @enemies = GetEnemiesNear ();
-            float runAwayPoints = CalculateRunAwayDecisionPoints (enemies);
-            GoRightToWeakerEnemyOrRunAway (enemies, runAwayPoints);
-            timeFromLastScan_ = 0.0f;
+            timeFromLastScan_ += timeStep;
+            timeFromLastShotRaycasting_ += timeStep;
+            timeFromLastRunAwayCalculating_ += timeStep;
+            
+            if (timeFromLastScan_ > 0.25f)
+            {
+                Array <Node @> @enemies = GetEnemiesNear ();
+                if (lastDecisionPoints_ <= CalculateGoRightToWeakerEnemyPoints (enemies))
+                    GoRightToPosition (weakerEnemyPosition_);
+                timeFromLastScan_ = 0.0f;
+            }
+            
+            if (timeFromLastRunAwayCalculating_ > 0.75f)
+            {
+                Array <Node @> @enemies = GetEnemiesNear ();
+                float runAwayPoints = CalculateRunAwayDecisionPoints (enemies);
+                if (runAwayPoints >= lastDecisionPoints_)
+                    RunAway ();
+                timeFromLastRunAwayCalculating_ = 0.0f;
+            }
+            
+            if (timeFromLastShotRaycasting_ >= 0.05f)
+                ShotIfItMakesSense ();
         }
-        
-        if (timeFromLastShotRaycasting_ >= 0.05f)
-            ShotIfItMakesSense ();
     }
     
     void Stop ()

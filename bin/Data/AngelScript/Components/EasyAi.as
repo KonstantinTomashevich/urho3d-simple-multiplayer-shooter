@@ -76,14 +76,17 @@ class Ai : ScriptObject
     
     void Update (float timeStep)
     {
-        timeFromLastMoveRandomization_ += timeStep;
-        timeFromLastShotRaycasting_ += timeStep;
-        
-        if (timeFromLastMoveRandomization_ >= 2.0f)
-            RandomizeMoveRequest ();
-        
-        if (timeFromLastShotRaycasting_ >= 0.25f)
-            ShotIfItMakesSense ();
+        if (not node.HasTag ("Died"))
+        {
+            timeFromLastMoveRandomization_ += timeStep;
+            timeFromLastShotRaycasting_ += timeStep;
+            
+            if (timeFromLastMoveRandomization_ >= 2.0f)
+                RandomizeMoveRequest ();
+            
+            if (timeFromLastShotRaycasting_ >= 0.25f)
+                ShotIfItMakesSense ();
+        }
     }
     
     void Stop ()

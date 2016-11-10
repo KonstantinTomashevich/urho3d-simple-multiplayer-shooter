@@ -97,14 +97,17 @@ class Ai : ScriptObject
     
     void Update (float timeStep)
     {
-        timeFromLastScan_ += timeStep;
-        timeFromLastShotRaycasting_ += timeStep;
-        
-        if (timeFromLastScan_ > 0.75f)
-            GoRightToNearestEnemyOrWaitIfNoEnemies ();
-        
-        if (timeFromLastShotRaycasting_ >= 0.125f)
-            ShotIfItMakesSense ();
+        if (not node.HasTag ("Died"))
+        {
+            timeFromLastScan_ += timeStep;
+            timeFromLastShotRaycasting_ += timeStep;
+            
+            if (timeFromLastScan_ > 0.75f)
+                GoRightToNearestEnemyOrWaitIfNoEnemies ();
+            
+            if (timeFromLastShotRaycasting_ >= 0.125f)
+                ShotIfItMakesSense ();
+        }
     }
     
     void Stop ()
