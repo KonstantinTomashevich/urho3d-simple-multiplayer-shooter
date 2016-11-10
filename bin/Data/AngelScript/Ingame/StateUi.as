@@ -7,6 +7,7 @@ namespace Ingame
     
     // *** Ui constants
     int OTHER_PLAYERS_LABELS_POOL_SIZE = 20;
+    int LADDER_LABELS_POOL_SIZE = 5;
     // ***
     
     class StateUi
@@ -15,12 +16,18 @@ namespace Ingame
         protected IntVector2 lastScreenSize;
         protected XMLFile @styles_;
         protected UIElement @rootElement_;
+        
         protected Text @infoText_;
         protected Array <String> chatHistory_;
         protected Text @chatHistoryUI_;
+        
         protected Button @sendMessageButton_;
         protected Text @sendMessageButtonText_;
         protected Array <Text @> otherPlayersLabels_;
+        
+        protected Sprite @ladderBackground_;
+        protected Array <Text @> ladderLabels_;
+        protected float timeUntilLadderUpdate_ = 0.0f;
         // ***
         
         // *** Public variables
@@ -78,6 +85,23 @@ namespace Ingame
                 label.color = Color (0.3f, 0.8f, 0.3f);
                 otherPlayersLabels_.Push (label);
             }
+            
+            for (int index = 0; index < LADDER_LABELS_POOL_SIZE; index++)
+            {
+                Text @label = rootElement_.CreateChild ("Text", "ladder_label_" + index);
+                label.text = "...";
+                label.SetStyleAuto (styles_);
+                label.color = Color (0.9f, 0.9f, 0.9f);
+                ladderLabels_.Push (label);
+            }
+            
+            ladderLabels_ [0].color = Color (0.9f, 0.9f, 0.2f);
+            ladderLabels_ [1].color = Color (0.6f, 0.6f, 0.6f);
+            ladderLabels_ [2].color = Color (0.9f, 0.5f, 0.0f);
+            
+            ladderBackground_ = rootElement_.CreateChild ("Sprite", "ladder_background");
+            ladderBackground_.texture = cache.GetResource ("Texture2D", "Textures/StoneDiffuse.dds");
+            ladderBackground_.color = Color (0.5f, 0.5f, 0.5f, 1.0f);
         }
         // ***
         
@@ -98,6 +122,19 @@ namespace Ingame
             messageEdit_.SetPosition (width - height * 0.63f, height * 0.93f);
             messageEdit_.SetSize (height * 0.5f, height * 0.04f);
             messageEdit_.textElement.fontSize = height * 0.02f;
+            
+            ladderBackground_.SetPosition (width * 0.5f, 0);
+            ladderBackground_.SetSize (width * 0.5f, height * 0.15f);
+            ladderBackground_.imageRect = IntRect (
+                            0, 0, ladderBackground_.texture.width * 
+                            (ladderBackground_.texture.height * 1.0f / (width * 0.5f)),
+                            ladderBackground_.texture.height);
+            
+            for (int index = 0; index < LADDER_LABELS_POOL_SIZE; index++)
+            {
+                ladderLabels_ [index].SetPosition (width * 0.525f, height * 0.025f * (index + 1));
+                ladderLabels_ [index].fontSize = height * 0.0135f;
+            }
         }
         // ***
         
@@ -115,6 +152,7 @@ namespace Ingame
             UpdateInfoText ();
             UpdateChat ();
             UpdatePlayersLabels ();
+            UpdateLadderLabels (timeStep);
         }
         
         void UpdateInfoText ()
@@ -205,6 +243,56 @@ namespace Ingame
                 }
                 else
                     label.visible = false;
+            }
+        }
+        
+        void UpdateLadderLabels (float timeStep)
+        {
+            timeUntilLadderUpdate_ -= timeStep;
+            if (timeUntilLadderUpdate_ > 0.0f)
+                return;
+            
+            timeUntilLadderUpdate_ = 1.0f;
+            Array <Variant> leaderboard = SharedGlobals::syncedGameScene.vars ["Leaderboard"].GetVariantVector ();
+            bool isPlayerFinded_ = false;
+            int lastScannedIndex_ = 0;
+            
+            for (int index = 0; index < LADDER_LABELS_POOL_SIZE; index++)
+            {
+                lastScannedIndex_ = index;
+                if (index < leaderboard.length)
+                {
+                    String data = leaderboard [index].GetString ();
+                    if (data.StartsWith (nickname_) and not isPlayerFinded_)
+                        isPlayerFinded_ = true;
+                    
+                    Array <String> information = data.Split (';');
+                    String labelText = (index + 1) + ". " + information [0] + "    ";
+                    labelText += "Kills: " + information [1] + "    ";
+                    labelText += "Deaths: " + information [2] + "    ";
+                    labelText += "EXP: " + information [3] + "    ";
+                    labelText += "Summary points: " + information [4];
+                    ladderLabels_ [index].text = labelText;
+                }
+            }
+            
+            if (not isPlayerFinded_)
+            {
+                ladderLabels_ [LADDER_LABELS_POOL_SIZE - 2].text = "______________________________________";
+                for (int index = lastScannedIndex_; index < leaderboard.length; index++)
+                {
+                    String data = leaderboard [index].GetString ();
+                    if (data.StartsWith (nickname_) and not isPlayerFinded_)
+                    {
+                        Array <String> information = data.Split (';');
+                        String labelText = (index + 1) + ". " + information [0] + "    ";
+                        labelText += "Kills: " + information [1] + "    ";
+                        labelText += "Deaths: " + information [2] + "    ";
+                        labelText += "EXP: " + information [3] + "    ";
+                        labelText += "Summary points: " + information [4];
+                        ladderLabels_ [LADDER_LABELS_POOL_SIZE - 1].text = labelText;
+                    }
+                }
             }
         }
         // ***

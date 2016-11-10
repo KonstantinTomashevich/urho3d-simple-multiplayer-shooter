@@ -37,9 +37,9 @@ const float ROTATION_IMPULSE = 2.0f;
 const Urho3D::Vector3 SHELL_LINEAR_VELOCITY (0.0f, 3.0f, 40.0f);
 
 const float MAX_HEALTH_INCREASE_PER_EXP = 0.05f;
-const float SHELL_DAMAGE_INCREASE_PER_EXP = 0.075f;
+const float SHELL_DAMAGE_INCREASE_PER_EXP = 0.1f;
 const int MAX_EXP = 20;
-const float BASIC_SHELL_DAMAGE = 35.0f;
+const float BASIC_SHELL_DAMAGE = 30.0f;
 }
 
 namespace SerializationConstants
