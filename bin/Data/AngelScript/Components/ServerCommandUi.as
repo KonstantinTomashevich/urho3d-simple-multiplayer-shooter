@@ -12,6 +12,15 @@ class ServerCommandUi : ScriptObject
     protected Text @sendMessageButtonText_;
     protected LineEdit @messageEdit_;
     protected Array <Text @> otherPlayersLabels_;
+
+    protected Array <Text @> ladderLabels_;
+    protected float timeUntilLadderUpdate_ = 0.0f;
+    protected int ladderViewOffset_ = 0;
+    
+    protected Button @increaseLadderViewOffsetButton_;
+    protected Text @increaseLadderViewOffsetButtonText_;
+    protected Button @decreaseLadderViewOffsetButton_;
+    protected Text @decreaseLadderViewOffsetButtonText_;
     
     protected int PROPERTY_OTHER_PLAYERS_LABELS_POOL_SIZE = 40;
     protected int PROPERTY_KEY_SWITCH_INPUT_CHAT_MESSAGE = KEY_TAB;
@@ -24,6 +33,7 @@ class ServerCommandUi : ScriptObject
     protected int PROPERTY_KEY_BACK = KEY_S;
     protected int PROPERTY_KEY_UP = KEY_Q;
     protected int PROPERTY_KEY_DOWN = KEY_E;
+    protected int PROPERTY_LADDER_LABELS_POOL_SIZE = 7;
 
     protected float PROPERTY_DEFAULT_CAMERA_MOVE_SPEED = 10.0f;
     protected float PROPERTY_SPEED_UP_MODIFER = 3.0f;
@@ -70,6 +80,32 @@ class ServerCommandUi : ScriptObject
             otherPlayersLabels_.Push (label);
         }
         
+        UIElement @ladderElement = rootElement_.CreateChild ("UIElement", "ladder");        
+        for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+        {
+            Text @label = ladderElement.CreateChild ("Text", "ladder_label_" + index);
+            label.text = "...";
+            label.SetStyleAuto (styles_);
+            label.color = Color (0.9f, 0.9f, 0.9f);
+            ladderLabels_.Push (label);
+        }
+        
+        increaseLadderViewOffsetButton_ = rootElement_.CreateChild ("Button", "increase_ladder_view_offset");
+        increaseLadderViewOffsetButton_.SetStyleAuto (styles_);
+            
+        increaseLadderViewOffsetButtonText_ = increaseLadderViewOffsetButton_.CreateChild ("Text", "text");
+        increaseLadderViewOffsetButtonText_.text = "Scroll down";
+        increaseLadderViewOffsetButtonText_.SetStyleAuto (styles_);
+        increaseLadderViewOffsetButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
+        
+        decreaseLadderViewOffsetButton_ = rootElement_.CreateChild ("Button", "decrease_ladder_view_offset");
+        decreaseLadderViewOffsetButton_.SetStyleAuto (styles_);
+            
+        decreaseLadderViewOffsetButtonText_ = decreaseLadderViewOffsetButton_.CreateChild ("Text", "text");
+        decreaseLadderViewOffsetButtonText_.text = "Scroll up";
+        decreaseLadderViewOffsetButtonText_.SetStyleAuto (styles_);
+        decreaseLadderViewOffsetButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
+        
         SubscribeToEvent ("UIMouseClickEnd", "HandleUiMouseClickEnd");
         SubscribeToEvent ("NewChatMessage", "HandleNewChatMessage");
         SubscribeToEvent ("NewServerMessage", "HandleNewServerMessage");
@@ -86,6 +122,13 @@ class ServerCommandUi : ScriptObject
         UpdateChat ();
         UpdatePlayersLabels ();
         HandleKeyboard (timeStep);
+        
+        timeUntilLadderUpdate_ -= timeStep;
+        if (timeUntilLadderUpdate_ <= 0.0f)
+        {
+            UpdateLadder ();
+            timeUntilLadderUpdate_ = 0.25f;
+        }
     }
     
     void Stop ()
@@ -106,6 +149,21 @@ class ServerCommandUi : ScriptObject
         messageEdit_.SetPosition (width - height * 0.63f, height * 0.93f);
         messageEdit_.SetSize (height * 0.5f, height * 0.04f);
         messageEdit_.textElement.fontSize = height * 0.02f;
+        
+        increaseLadderViewOffsetButton_.SetPosition (width * 0.525f, height * 0.25f);
+        increaseLadderViewOffsetButton_.SetSize (width * 0.45f, height * 0.04f);
+        increaseLadderViewOffsetButtonText_.fontSize = height * 0.02f;
+        
+        decreaseLadderViewOffsetButton_.SetPosition (width * 0.525f, height * 0.01f);
+        decreaseLadderViewOffsetButton_.SetSize (width * 0.45f, height * 0.04f);
+        decreaseLadderViewOffsetButtonText_.fontSize = height * 0.02f;
+        
+        for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+        {
+            ladderLabels_ [index].SetPosition (width * 0.525f, 
+                                               height * 0.05f + height * 0.025f * (index + 1));
+            ladderLabels_ [index].fontSize = height * 0.0135f;
+        }
     }
     
     void UpdateChat ()
@@ -235,12 +293,57 @@ class ServerCommandUi : ScriptObject
             else
                 label.visible = false;
         }
+    }
+    
+    void UpdateLadder ()
+    {
+        Array <Variant> leaderboard = scene.vars ["Leaderboard"].GetVariantVector ();
+        if (ladderViewOffset_ + PROPERTY_LADDER_LABELS_POOL_SIZE >= leaderboard.length)
+            ladderViewOffset_ = leaderboard.length - PROPERTY_LADDER_LABELS_POOL_SIZE - 1;
+        
+        if (ladderViewOffset_ < 0)
+            ladderViewOffset_ = 0;
+        
+        for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+        {
+            Text @label = ladderLabels_ [index];
+            if (ladderViewOffset_ + index < leaderboard.length)
+            {
+                String data = leaderboard [ladderViewOffset_ + index].GetString ();
+                Array <String> information = data.Split (';');
+                
+                String labelText = (ladderViewOffset_ + index + 1) + ". " + information [0] + "    ";
+                labelText += "Kills: " + information [1] + "    ";
+                labelText += "Deaths: " + information [2] + "    ";
+                labelText += "EXP: " + information [3] + "    ";
+                labelText += "Summary points: " + information [4];
+                
+                label.text = labelText;
+                if (ladderViewOffset_ + index == 0)
+                    label.color = Color (0.9f, 0.9f, 0.2f);
+                else if (ladderViewOffset_ + index == 1)
+                    label.color = Color (0.6f, 0.6f, 0.6f);
+                else if (ladderViewOffset_ + index == 2)
+                    label.color = Color (0.9f, 0.5f, 0.0f);
+                else
+                    label.color = Color (0.9f, 0.9f, 0.9f);
+            }
+            else
+            {
+                label.color = Color (0.9f, 0.9f, 0.9f);
+                label.text = "";
+            }
         }
+    }
     
     void HandleUiMouseClickEnd (StringHash eventType, VariantMap &eventData)
     {
         if (eventData ["Element"].GetPtr () is sendMessageButton_)
             SendChatMessage ();
+        else if (eventData ["Element"].GetPtr () is increaseLadderViewOffsetButton_)
+            ladderViewOffset_ += 1;
+        else if (eventData ["Element"].GetPtr () is decreaseLadderViewOffsetButton_)
+            ladderViewOffset_ -= 1;
     }
     
     void SendChatMessage ()

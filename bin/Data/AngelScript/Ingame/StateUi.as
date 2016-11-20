@@ -25,7 +25,6 @@ namespace Ingame
         protected Text @sendMessageButtonText_;
         protected Array <Text @> otherPlayersLabels_;
         
-        protected Sprite @ladderBackground_;
         protected Array <Text @> ladderLabels_;
         protected float timeUntilLadderUpdate_ = 0.0f;
         // ***
@@ -98,10 +97,6 @@ namespace Ingame
             ladderLabels_ [0].color = Color (0.9f, 0.9f, 0.2f);
             ladderLabels_ [1].color = Color (0.6f, 0.6f, 0.6f);
             ladderLabels_ [2].color = Color (0.9f, 0.5f, 0.0f);
-            
-            ladderBackground_ = rootElement_.CreateChild ("Sprite", "ladder_background");
-            ladderBackground_.texture = cache.GetResource ("Texture2D", "Textures/StoneDiffuse.dds");
-            ladderBackground_.color = Color (0.5f, 0.5f, 0.5f, 1.0f);
         }
         // ***
         
@@ -122,13 +117,6 @@ namespace Ingame
             messageEdit_.SetPosition (width - height * 0.63f, height * 0.93f);
             messageEdit_.SetSize (height * 0.5f, height * 0.04f);
             messageEdit_.textElement.fontSize = height * 0.02f;
-            
-            ladderBackground_.SetPosition (width * 0.5f, 0);
-            ladderBackground_.SetSize (width * 0.5f, height * 0.15f);
-            ladderBackground_.imageRect = IntRect (
-                            0, 0, ladderBackground_.texture.width * 
-                            (ladderBackground_.texture.height * 1.0f / (width * 0.5f)),
-                            ladderBackground_.texture.height);
             
             for (int index = 0; index < LADDER_LABELS_POOL_SIZE; index++)
             {
