@@ -14,6 +14,8 @@ class ServerCommandUi : ScriptObject
     protected Array <Text @> otherPlayersLabels_;
 
     protected Array <Text @> ladderLabels_;
+    protected Array <Button @> kickButtons_;
+    protected Array <Text @> kickButtonsTexts_;
     protected float timeUntilLadderUpdate_ = 0.0f;
     protected int ladderViewOffset_ = 0;
     
@@ -90,6 +92,20 @@ class ServerCommandUi : ScriptObject
             ladderLabels_.Push (label);
         }
         
+        for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+        {
+            Button @kickButton = ladderElement.CreateChild ("Button", "kick_button_" + index);
+            kickButton.SetStyleAuto (styles_);
+            
+            Text @kickButtonText = kickButton.CreateChild ("Text", "text");
+            kickButtonText.text = "Kick!";
+            kickButtonText.SetStyleAuto (styles_);
+            kickButtonText.SetAlignment (HA_CENTER, VA_CENTER);
+            
+            kickButtons_.Push (kickButton);
+            kickButtonsTexts_.Push (kickButtonText);
+        }
+        
         increaseLadderViewOffsetButton_ = rootElement_.CreateChild ("Button", "increase_ladder_view_offset");
         increaseLadderViewOffsetButton_.SetStyleAuto (styles_);
             
@@ -127,7 +143,7 @@ class ServerCommandUi : ScriptObject
         if (timeUntilLadderUpdate_ <= 0.0f)
         {
             UpdateLadder ();
-            timeUntilLadderUpdate_ = 0.25f;
+            timeUntilLadderUpdate_ = 2.0f;
         }
     }
     
@@ -163,6 +179,14 @@ class ServerCommandUi : ScriptObject
             ladderLabels_ [index].SetPosition (width * 0.525f, 
                                                height * 0.05f + height * 0.025f * (index + 1));
             ladderLabels_ [index].fontSize = height * 0.0135f;
+        }
+        
+        for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+        {
+            kickButtons_ [index].SetPosition (width - height * 0.065f, 
+                                              height * 0.05f + height * 0.025f * (index + 1));
+            kickButtons_ [index].SetSize (height * 0.065f, height * 0.025f);
+            kickButtonsTexts_ [index].fontSize = height * 0.0135f;
         }
     }
     
@@ -344,6 +368,22 @@ class ServerCommandUi : ScriptObject
             ladderViewOffset_ += 1;
         else if (eventData ["Element"].GetPtr () is decreaseLadderViewOffsetButton_)
             ladderViewOffset_ -= 1;
+        else
+        {
+            for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
+                if (eventData ["Element"].GetPtr () is kickButtons_ [index])
+                {
+                    Array <Variant> leaderboard = scene.vars ["Leaderboard"].GetVariantVector ();
+                    if (ladderViewOffset_ + index < leaderboard.length)
+                    {
+                        Array <String> information = leaderboard [ladderViewOffset_ + index].
+                                                     GetString ().Split (';');
+                        VariantMap eventData;
+                        eventData ["Name"] = information [0];
+                        SendEvent ("KickPlayer", eventData);
+                    }
+                }
+        }
     }
     
     void SendChatMessage ()

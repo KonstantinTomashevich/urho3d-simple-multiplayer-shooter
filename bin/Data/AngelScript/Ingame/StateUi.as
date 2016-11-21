@@ -240,7 +240,7 @@ namespace Ingame
             if (timeUntilLadderUpdate_ > 0.0f)
                 return;
             
-            timeUntilLadderUpdate_ = 1.0f;
+            timeUntilLadderUpdate_ = 2.0f;
             Array <Variant> leaderboard = SharedGlobals::syncedGameScene.vars ["Leaderboard"].GetVariantVector ();
             bool isPlayerFinded_ = false;
             int lastScannedIndex_ = 0;

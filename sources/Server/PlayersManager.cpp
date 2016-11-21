@@ -252,6 +252,7 @@ void PlayersManager::Setup ()
     SubscribeToEvent (Urho3D::StringHash ("PlayerShooted"), URHO3D_HANDLER (PlayersManager, OnPlayerShooted));
     SubscribeToEvent (Urho3D::StringHash ("RequestServerMessage"), URHO3D_HANDLER (PlayersManager, OnServerMessageRequest));
     SubscribeToEvent (Urho3D::StringHash ("CreateAiPlayer"), URHO3D_HANDLER (PlayersManager, OnCreateAiPlayerRequest));
+    SubscribeToEvent (Urho3D::StringHash ("KickPlayer"), URHO3D_HANDLER (PlayersManager, OnKickPlayerRequest));
 }
 
 void PlayersManager::Update (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
@@ -359,10 +360,8 @@ void PlayersManager::OnPlayerShooted (Urho3D::StringHash eventType, Urho3D::Vari
     PlayerState *damaged = GetPlayerByName (
                 eventData [Urho3D::StringHash ("DamagedPlayerName")].GetString ());
 
-    assert (attacker);
     assert (damaged);
-
-    if (!damaged->ApplyDamage (attacker->GetShellDamage ()))
+    if (attacker && !damaged->ApplyDamage (attacker->GetShellDamage ()))
     {
         attacker->IncrementKills ();
         SendServerMessage (damaged->GetName () + " killed by " + attacker->GetName () + "!");
@@ -373,6 +372,24 @@ void PlayersManager::OnServerMessageRequest (Urho3D::StringHash eventType, Urho3
 {
     Urho3D::String message = eventData [Urho3D::StringHash ("Message")].GetString ();
     SendServerMessage (message);
+}
+
+void PlayersManager::OnKickPlayerRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
+{
+    // TODO: This event will be defended from hack.
+    Urho3D::String name = eventData [Urho3D::StringHash ("Name")].GetString ();
+    PlayerState *player = GetPlayerByName (name);
+    if (player->GetConnection ())
+        player->GetConnection ()->Disconnect ();
+    else
+    {
+        SendServerMessage (player->GetName () + " (AI) exited!");
+        if (player->GetNode ())
+            player->GetNode ()->Remove ();
+
+        delete player;
+        players_.Erase (Urho3D::StringHash (name));
+    }
 }
 
 void PlayersManager::OnCreateAiPlayerRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
