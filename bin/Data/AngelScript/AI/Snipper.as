@@ -21,7 +21,8 @@ class Ai : ScriptObject
                 processingNode.vars ["ObjectType"].GetInt () ==
                 SerializationConstants__OBJECT_TYPE_PLAYER and
                 not processingNode.HasTag ("Died") and
-                (processingNode.position - node.position).length < 25.0f)
+                (processingNode.position - node.position).length < 25.0f and
+                (processingNode.position - node.position).length > 6.0f)
                 
                 enemiesNear.Push (processingNode);
         }
@@ -47,16 +48,15 @@ class Ai : ScriptObject
     
     protected void GoRightToPosition (Vector3 position)
     {
-        if (position.z > 30.0f)
+        Vector3 localPosition = node.WorldToLocal (position);
+        if (localPosition.z > 10.0f)
             normalizedMoveRequest_.x = 1.0f;
-        else if (position.z > 10.0f)
-            normalizedMoveRequest_.x = 0.5f;
         else
             normalizedMoveRequest_.x = 0.0f;
             
-        if (position.x > 5.0f)
+        if (localPosition.x > 1.0f)
             normalizedMoveRequest_.y = 1.0f;
-        else if (position.x < -5.0f) 
+        else if (localPosition.x < -1.0f) 
             normalizedMoveRequest_.y = -1.0f;
         else
             normalizedMoveRequest_.y = 0.0f;
@@ -106,8 +106,6 @@ class Ai : ScriptObject
             decisionPoints += 1000.0f * (GameplayConstants__BASIC_SHELL_DAMAGE *
                                         (1.0f + GameplayConstants__SHELL_DAMAGE_INCREASE_PER_EXP) /
                                         processingEnemy.vars ["Health"].GetFloat ()) ;
-              
-            Vector3 localPosition = node.WorldToLocal (processingEnemy.worldPosition);
             points.Push (decisionPoints);
         }
         
@@ -172,7 +170,7 @@ class Ai : ScriptObject
             timeFromLastShotRaycasting_ += timeStep;
             timeFromLastRunAwayCalculating_ += timeStep;
             
-            if (timeFromLastScan_ > 0.25f)
+            if (timeFromLastScan_ > 0.2f)
             {
                 Array <Node @> @enemies = GetEnemiesNear ();
                 if (lastDecisionPoints_ <= CalculateGoRightToWeakerEnemyPoints (enemies))
@@ -180,7 +178,7 @@ class Ai : ScriptObject
                 timeFromLastScan_ = 0.0f;
             }
             
-            if (timeFromLastRunAwayCalculating_ > 0.75f)
+            if (timeFromLastRunAwayCalculating_ > 1.0f)
             {
                 Array <Node @> @enemies = GetEnemiesNear ();
                 float runAwayPoints = CalculateRunAwayDecisionPoints (enemies);
