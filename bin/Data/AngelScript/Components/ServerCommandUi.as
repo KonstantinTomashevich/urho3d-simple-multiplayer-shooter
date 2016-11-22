@@ -420,9 +420,15 @@ class ServerCommandUi : ScriptObject
         if (eventData ["Element"].GetPtr () is sendMessageButton_)
             SendChatMessage ();
         else if (eventData ["Element"].GetPtr () is increaseLadderViewOffsetButton_)
+        {
             ladderViewOffset_ += 1;
+            timeUntilLadderUpdate_ = 0.0f;
+        }
         else if (eventData ["Element"].GetPtr () is decreaseLadderViewOffsetButton_)
+        {
             ladderViewOffset_ -= 1;
+            timeUntilLadderUpdate_ = 0.0f;
+        }
         else if (eventData ["Element"].GetPtr () is spawnAiButton_)
             SendSpawnAiRequest ();
         else
