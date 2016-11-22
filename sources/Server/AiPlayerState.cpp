@@ -4,12 +4,12 @@
 #include <AngelScript/angelscript.h>
 #include <Urho3D/AngelScript/APITemplates.h>
 
-AiPlayerState::AiPlayerState (PlayersManager *manager, int aiType) :
+AiPlayerState::AiPlayerState (PlayersManager *manager, Urho3D::String aiScriptPath) :
     PlayerState (manager, 0),
-    aiCommands_ (new AiCommands (manager->GetContext ()))
+    aiCommands_ (new AiCommands (manager->GetContext ())),
+    scriptPath_ (aiScriptPath)
 {
     isAi_ = true;
-    aiType_ = aiType;
     timeBeforeSpawn_ = 0.0f;
 }
 
@@ -34,6 +34,11 @@ void AiPlayerState::Update (float timeStep)
     PlayerState::Update (timeStep);
     if (aiCommands_->tryToFireInNextFrame_)
         TryToFire ();
+}
+
+Urho3D::String AiPlayerState::GetScriptPath ()
+{
+    return scriptPath_;
 }
 
 AiCommands::AiCommands (Urho3D::Context *context) : Urho3D::Object (context),

@@ -48,7 +48,7 @@ public:
     void Reset ();
 
     void RequestName (PlayerState *requester);
-    void RequestRespawn (PlayerState *requester, bool isAi, int aiType);
+    void RequestRespawn (PlayerState *requester, bool isAi);
 
     void OnClientConnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
     void OnClientDisconnected (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);

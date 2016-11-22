@@ -19,8 +19,10 @@ class AiPlayerState : public PlayerState
 {
 protected:
     AiCommands *aiCommands_;
+    Urho3D::String scriptPath_;
 public:
-    AiPlayerState (PlayersManager *manager, int aiType);
+    AiPlayerState (PlayersManager *manager, Urho3D::String aiScriptPath);
     virtual ~AiPlayerState ();
     virtual void Update (float timeStep);
+    virtual Urho3D::String GetScriptPath ();
 };

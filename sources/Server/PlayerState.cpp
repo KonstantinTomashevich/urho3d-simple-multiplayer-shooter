@@ -18,8 +18,7 @@ PlayerState::PlayerState (PlayersManager *manager, Urho3D::Connection *connectio
     timeBeforeSpawn_ (ServerConstants::TIME_BEFORE_AUTOMATIC_NAMING * 2.0f),
     deaths_ (0),
     kills_ (0),
-    isAi_ (false),
-    aiType_ (-1)
+    isAi_ (false)
 {
     assert (manager);
 }
@@ -46,7 +45,7 @@ void PlayerState::Update (float timeStep)
                 timeBeforeSpawn_ -= timeStep;
             else
             {
-                manager_->RequestRespawn (this, isAi_, aiType_);
+                manager_->RequestRespawn (this, isAi_);
                 node_->SetVar (SerializationConstants::HEALTH_VAR_HASH, GameplayConstants::BASIC_MAX_HEALTH);
                 node_->SetVar (SerializationConstants::NAME_VAR_HASH, Urho3D::Variant (name_));
                 node_->SetVar (SerializationConstants::EXP_VAR_HASH, Urho3D::Variant (0));
@@ -208,5 +207,10 @@ bool PlayerState::ApplyDamage (float damage)
     }
     else
         return false;
+}
+
+Urho3D::String PlayerState::GetScriptPath ()
+{
+    return "";
 }
 

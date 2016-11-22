@@ -204,7 +204,7 @@ void PlayersManager::RecalculateLeaderboard ()
     playersPoints.Sort ();
     Urho3D::VariantVector leaderboardData;
     // Iterate from end of map because numbers in hash map are sorted from smallest to biggest.
-    for (int index = playersPoints.Values ().Size () - 1; index > 0; index--)
+    for (int index = playersPoints.Values ().Size () - 1; index >= 0; index--)
     {
         PlayerState *player = playersPoints.Values ().At (index);
         float points = playersPoints.Keys ().At (index).value_;
@@ -286,7 +286,7 @@ void PlayersManager::RequestName (PlayerState *requester)
     requester->GetConnection ()->SendMessage (NetworkMessageIds::STC_PLAYER_NAME_SETTED, true, false, messageData);
 }
 
-void PlayersManager::RequestRespawn (PlayerState *requester, bool isAi, int aiType)
+void PlayersManager::RequestRespawn (PlayerState *requester, bool isAi)
 {
     assert (!requester->GetNode ());
     assert (requester->GetTimeBeforeSpawn () <= 0);
@@ -294,7 +294,7 @@ void PlayersManager::RequestRespawn (PlayerState *requester, bool isAi, int aiTy
     Urho3D::Scene *scene = context_->GetSubsystem <Urho3D::Scene> ();
     assert (scene);
     Spawner *spawner = context_->GetSubsystem <Spawner> ();
-    unsigned id = spawner->SpawnPlayer (isAi, aiType);
+    unsigned id = spawner->SpawnPlayer (isAi, requester->GetScriptPath ());
     requester->SetNode (scene->GetNode (id));
 
     Urho3D::VectorBuffer messageData;
@@ -394,9 +394,9 @@ void PlayersManager::OnKickPlayerRequest (Urho3D::StringHash eventType, Urho3D::
 
 void PlayersManager::OnCreateAiPlayerRequest (Urho3D::StringHash eventType, Urho3D::VariantMap &eventData)
 {
-    int aiType = eventData [Urho3D::StringHash ("AiType")].GetInt ();
+    Urho3D::String aiScriptPath = eventData [Urho3D::StringHash ("AiScriptPath")].GetString ();
     Urho3D::String requestedName = eventData [Urho3D::StringHash ("Name")].GetString ();
-    AiPlayerState *playerState = new AiPlayerState (this, aiType);
+    AiPlayerState *playerState = new AiPlayerState (this, aiScriptPath);
 
     Urho3D::String resultingName = CreateUniqueName (requestedName);
     playerState->SetName (resultingName);

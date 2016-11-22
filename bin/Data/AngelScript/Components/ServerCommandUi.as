@@ -24,6 +24,13 @@ class ServerCommandUi : ScriptObject
     protected Button @decreaseLadderViewOffsetButton_;
     protected Text @decreaseLadderViewOffsetButtonText_;
     
+    protected Text@ aiToSpawnScriptPathLabel_;
+    protected LineEdit @aiToSpawnScriptPathEdit_;
+    protected Text @aiToSpawnPlayerNameLabel_;
+    protected LineEdit @aiToSpawnPlayerNameEdit_;
+    protected Button @spawnAiButton_;
+    protected Text @spawnAiButtonText_;
+    
     protected int PROPERTY_OTHER_PLAYERS_LABELS_POOL_SIZE = 40;
     protected int PROPERTY_KEY_SWITCH_INPUT_CHAT_MESSAGE = KEY_TAB;
     protected int PROPERTY_KEY_SEND_CHAT_MESSAGE = KEY_RETURN;
@@ -122,6 +129,35 @@ class ServerCommandUi : ScriptObject
         decreaseLadderViewOffsetButtonText_.SetStyleAuto (styles_);
         decreaseLadderViewOffsetButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
         
+        UIElement @aiToSpawnElement = rootElement_.CreateChild ("UIElement", "ai_to_spawn");
+        aiToSpawnScriptPathLabel_ = aiToSpawnElement.CreateChild ("Text", "script_path_label");
+        aiToSpawnScriptPathLabel_.text = "Spawn AI menu.\nScript path:";
+        aiToSpawnScriptPathLabel_.SetStyleAuto (styles_);
+        
+        aiToSpawnScriptPathEdit_ = aiToSpawnElement.CreateChild ("LineEdit", "script_path_edit");
+        aiToSpawnScriptPathEdit_.SetStyleAuto (styles_);
+        aiToSpawnScriptPathEdit_.textElement.SetAlignment (HA_LEFT, VA_CENTER);
+        aiToSpawnScriptPathEdit_.text = "AngelScript/Components/${YourAiName}.as";
+        aiToSpawnScriptPathEdit_.cursorPosition = 0;
+        
+        aiToSpawnPlayerNameLabel_ = aiToSpawnElement.CreateChild ("Text", "player_name_label");
+        aiToSpawnPlayerNameLabel_.text = "AI player name:";
+        aiToSpawnPlayerNameLabel_.SetStyleAuto (styles_);
+        
+        aiToSpawnPlayerNameEdit_ = aiToSpawnElement.CreateChild ("LineEdit", "player_name_edit");
+        aiToSpawnPlayerNameEdit_.SetStyleAuto (styles_);
+        aiToSpawnPlayerNameEdit_.textElement.SetAlignment (HA_LEFT, VA_CENTER);
+        aiToSpawnPlayerNameEdit_.text = "${YourAiPlayerName}";
+        aiToSpawnPlayerNameEdit_.cursorPosition = 0;
+        
+        spawnAiButton_ = aiToSpawnElement.CreateChild ("Button", "spawn_ai_button");
+        spawnAiButton_.SetStyleAuto (styles_);
+        
+        spawnAiButtonText_ = spawnAiButton_.CreateChild ("Text", "text");
+        spawnAiButtonText_.text = "Spawn AI!";
+        spawnAiButtonText_.SetStyleAuto (styles_);
+        spawnAiButtonText_.SetAlignment (HA_CENTER, VA_CENTER);
+        
         SubscribeToEvent ("UIMouseClickEnd", "HandleUiMouseClickEnd");
         SubscribeToEvent ("NewChatMessage", "HandleNewChatMessage");
         SubscribeToEvent ("NewServerMessage", "HandleNewServerMessage");
@@ -188,6 +224,24 @@ class ServerCommandUi : ScriptObject
             kickButtons_ [index].SetSize (height * 0.065f, height * 0.025f);
             kickButtonsTexts_ [index].fontSize = height * 0.0135f;
         }
+        
+        aiToSpawnScriptPathLabel_.SetPosition (height * 0.025f, height * 0.025f);
+        aiToSpawnScriptPathLabel_.fontSize = height * 0.02f;
+        
+        aiToSpawnScriptPathEdit_.SetPosition (height * 0.025f, height * 0.085f);
+        aiToSpawnScriptPathEdit_.SetSize (width * 0.4f, height * 0.04f);
+        aiToSpawnScriptPathEdit_.textElement.fontSize = height * 0.02f;
+        
+        aiToSpawnPlayerNameLabel_.SetPosition (height * 0.025f, height * 0.125f);
+        aiToSpawnPlayerNameLabel_.fontSize = height * 0.02f;
+        
+        aiToSpawnPlayerNameEdit_.SetPosition (height * 0.025f, height * 0.16f);
+        aiToSpawnPlayerNameEdit_.SetSize (width * 0.4f, height * 0.04f);
+        aiToSpawnPlayerNameEdit_.textElement.fontSize = height * 0.02f;
+        
+        spawnAiButton_.SetPosition (height * 0.025f, height * 0.21f);
+        spawnAiButton_.SetSize (width * 0.4f, height * 0.04f);
+        spawnAiButtonText_.fontSize = height * 0.02f;
     }
     
     void UpdateChat ()
@@ -216,7 +270,8 @@ class ServerCommandUi : ScriptObject
             messageEdit_.focus == true)
             SendChatMessage ();
         
-        if (messageEdit_.focus == false)
+        if (messageEdit_.focus == false and aiToSpawnPlayerNameEdit_.focus == false and
+            aiToSpawnScriptPathEdit_.focus == false)
         {
             Vector3 move;
             if (input.keyDown [PROPERTY_KEY_LEFT])
@@ -368,6 +423,8 @@ class ServerCommandUi : ScriptObject
             ladderViewOffset_ += 1;
         else if (eventData ["Element"].GetPtr () is decreaseLadderViewOffsetButton_)
             ladderViewOffset_ -= 1;
+        else if (eventData ["Element"].GetPtr () is spawnAiButton_)
+            SendSpawnAiRequest ();
         else
         {
             for (int index = 0; index < PROPERTY_LADDER_LABELS_POOL_SIZE; index++)
@@ -395,6 +452,14 @@ class ServerCommandUi : ScriptObject
         messageEdit_.selected = false;
         messageEdit_.focus = false;
         messageEdit_.text = "";
+    }
+    
+    void SendSpawnAiRequest ()
+    {
+        VariantMap eventData;
+        eventData ["AiScriptPath"] = aiToSpawnScriptPathEdit_.text;
+        eventData ["Name"] = aiToSpawnPlayerNameEdit_.text;
+        SendEvent ("CreateAiPlayer", eventData);
     }
     
     void HandleNewChatMessage (StringHash eventType, VariantMap &eventData)

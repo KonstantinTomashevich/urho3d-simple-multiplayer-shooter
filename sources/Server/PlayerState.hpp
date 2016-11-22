@@ -21,9 +21,7 @@ protected:
 
     int deaths_;
     int kills_;
-
     bool isAi_;
-    int aiType_;
 public:
     PlayerState (PlayersManager *manager, Urho3D::Connection *connection);
     virtual ~PlayerState ();
@@ -55,4 +53,5 @@ public:
     float GetShellDamage ();
     // Returns true if player survived, otherwise false.
     bool ApplyDamage (float damage);
+    virtual Urho3D::String GetScriptPath ();
 };

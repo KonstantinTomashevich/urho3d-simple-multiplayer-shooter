@@ -66,31 +66,6 @@ void Urho3DApplication::Start ()
 
     // Start server
     GetSubsystem <Urho3D::Network> ()->StartServer (ServerConstants::PORT);
-
-    // TODO: Some temporary code for testing ai. Spawn 15 easy AIs and 10 medium AIs and 5 hard AIs.
-    for (int index = 0; index < 15; index++)
-    {
-        Urho3D::VariantMap eventData;
-        eventData [Urho3D::StringHash ("AiType")] = ServerConstants::AI_TYPE_EASY;
-        eventData [Urho3D::StringHash ("Name")] = Urho3D::String ("Floory");
-        SendEvent (Urho3D::StringHash ("CreateAiPlayer"), eventData);
-    }
-
-    for (int index = 0; index < 10; index++)
-    {
-        Urho3D::VariantMap eventData;
-        eventData [Urho3D::StringHash ("AiType")] = ServerConstants::AI_TYPE_MEDIUM;
-        eventData [Urho3D::StringHash ("Name")] = Urho3D::String ("Humtram");
-        SendEvent (Urho3D::StringHash ("CreateAiPlayer"), eventData);
-    }
-
-    for (int index = 0; index < 5; index++)
-    {
-        Urho3D::VariantMap eventData;
-        eventData [Urho3D::StringHash ("AiType")] = ServerConstants::AI_TYPE_HARD;
-        eventData [Urho3D::StringHash ("Name")] = Urho3D::String ("Hookie");
-        SendEvent (Urho3D::StringHash ("CreateAiPlayer"), eventData);
-    }
 }
 
 void Urho3DApplication::Stop ()
