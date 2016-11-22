@@ -90,7 +90,7 @@ void PlayerState::Update (float timeStep)
 void PlayerState::TryToFire ()
 {
     Spawner *spawner = manager_->GetContext ()->GetSubsystem <Spawner> ();
-    if (timeFromLastFire_ >= GameplayConstants::FIRE_COOLDOWN_TIME)
+    if (node_ && timeFromLastFire_ >= GameplayConstants::FIRE_COOLDOWN_TIME)
     {
         assert (spawner);
         spawner->SpawnShell (this);

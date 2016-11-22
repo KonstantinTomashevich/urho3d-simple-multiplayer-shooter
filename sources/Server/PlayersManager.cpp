@@ -183,6 +183,12 @@ void PlayersManager::KillPlayersIfTheyOutIfLevelBounds ()
 
 void PlayersManager::RecalculateLeaderboard ()
 {
+    // TODO: What about other points system? Example:
+    // Points contained in PlayerState.
+    // Each sucessfull attack (shot) gives +10 points.
+    // Each kill gives +10 points (in addition to sucessfull shot points).
+    // Each death gives -30 points.
+
     Urho3D::HashMap <HashableFloat, PlayerState *> playersPoints;
     for (int index = 0; index < players_.Values ().Size (); index++)
     {
