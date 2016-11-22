@@ -19,10 +19,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../bin/Data/AngelScript/Components/EasyAi.as" />
+		<Unit filename="../bin/Data/AngelScript/AI/Barbarian.as" />
+		<Unit filename="../bin/Data/AngelScript/AI/Randomer.as" />
+		<Unit filename="../bin/Data/AngelScript/AI/Snipper.as" />
 		<Unit filename="../bin/Data/AngelScript/Components/Explossion.as" />
-		<Unit filename="../bin/Data/AngelScript/Components/HardAi.as" />
-		<Unit filename="../bin/Data/AngelScript/Components/MediumAi.as" />
 		<Unit filename="../bin/Data/AngelScript/Components/ServerCommandUi.as" />
 		<Unit filename="../bin/Data/AngelScript/Components/Shell.as" />
 		<Unit filename="../bin/Data/AngelScript/GameApplication.as" />

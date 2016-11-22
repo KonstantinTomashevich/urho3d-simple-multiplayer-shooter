@@ -137,7 +137,7 @@ class ServerCommandUi : ScriptObject
         aiToSpawnScriptPathEdit_ = aiToSpawnElement.CreateChild ("LineEdit", "script_path_edit");
         aiToSpawnScriptPathEdit_.SetStyleAuto (styles_);
         aiToSpawnScriptPathEdit_.textElement.SetAlignment (HA_LEFT, VA_CENTER);
-        aiToSpawnScriptPathEdit_.text = "AngelScript/Components/${YourAiName}.as";
+        aiToSpawnScriptPathEdit_.text = "AngelScript/AI/${YourAiName}.as";
         aiToSpawnScriptPathEdit_.cursorPosition = 0;
         
         aiToSpawnPlayerNameLabel_ = aiToSpawnElement.CreateChild ("Text", "player_name_label");
