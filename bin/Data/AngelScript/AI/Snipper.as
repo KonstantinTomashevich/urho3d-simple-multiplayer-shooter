@@ -49,8 +49,10 @@ class Ai : ScriptObject
     protected void GoRightToPosition (Vector3 position)
     {
         Vector3 localPosition = node.WorldToLocal (position);
-        if (localPosition.z > 10.0f)
+        if (localPosition.z > 20.0f)
             normalizedMoveRequest_.x = 1.0f;
+        else if (localPosition.z < 10.0f)
+            normalizedMoveRequest_.x = -1.0f;
         else
             normalizedMoveRequest_.x = 0.0f;
             
