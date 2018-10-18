@@ -38,9 +38,9 @@ GETTER (int, MAXIMUM_OBSTACLES_COUNT)
 
 namespace GameplayConstants
 {
-GETTER (int, RESPAWN_TIME)
-GETTER (int, HEALTH_REGENERATION)
-GETTER (int, BASIC_MAX_HEALTH)
+GETTER (float, RESPAWN_TIME)
+GETTER (float, HEALTH_REGENERATION)
+GETTER (float, BASIC_MAX_HEALTH)
 GETTER (float, DEAD_PLAYERS_REMOVE_TIME)
 GETTER (float, FIRE_COOLDOWN_TIME)
 
@@ -87,9 +87,9 @@ void BindConstantsToAngelScript (Urho3D::Script *script)
     BIND_CONSTANT (engine, int, ServerConstants, MINIMUM_OBSTACLES_COUNT);
     BIND_CONSTANT (engine, int, ServerConstants, MAXIMUM_OBSTACLES_COUNT);
 
-    BIND_CONSTANT (engine, int, GameplayConstants, RESPAWN_TIME);
-    BIND_CONSTANT (engine, int, GameplayConstants, HEALTH_REGENERATION);
-    BIND_CONSTANT (engine, int, GameplayConstants, BASIC_MAX_HEALTH);
+    BIND_CONSTANT (engine, float, GameplayConstants, RESPAWN_TIME);
+    BIND_CONSTANT (engine, float, GameplayConstants, HEALTH_REGENERATION);
+    BIND_CONSTANT (engine, float, GameplayConstants, BASIC_MAX_HEALTH);
     BIND_CONSTANT (engine, float, GameplayConstants, DEAD_PLAYERS_REMOVE_TIME);
     BIND_CONSTANT (engine, float, GameplayConstants, FIRE_COOLDOWN_TIME);
 

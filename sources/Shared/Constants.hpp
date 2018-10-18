@@ -7,7 +7,7 @@ void BindConstantsToAngelScript (Urho3D::Script *script);
 namespace ServerConstants
 {
 const int PORT = 6391;
-const int TIME_BEFORE_AUTOMATIC_NAMING = 1.0f;
+const float TIME_BEFORE_AUTOMATIC_NAMING = 1.0f;
 const float MINIMUM_DISTANCE_BETWEEN_OBSTACLES = 10.0f;
 const int MINIMUM_OBSTACLES_COUNT = 5;
 const int MAXIMUM_OBSTACLES_COUNT = 25;
@@ -15,9 +15,9 @@ const int MAXIMUM_OBSTACLES_COUNT = 25;
 
 namespace GameplayConstants
 {
-const int RESPAWN_TIME = 20.0f;
-const int HEALTH_REGENERATION = 2.5f;
-const int BASIC_MAX_HEALTH = 100.0f;
+const float RESPAWN_TIME = 20.0f;
+const float HEALTH_REGENERATION = 2.5f;
+const float BASIC_MAX_HEALTH = 100.0f;
 const float DEAD_PLAYERS_REMOVE_TIME = 10.0f;
 const float FIRE_COOLDOWN_TIME = 1.5f;
 
@@ -61,18 +61,18 @@ enum NetworkMessageId
 {
     // Server to client messages
 
-    STC_PLAYER_NAME_SETTED = 101, // Data: nameString
-    STC_PLAYER_SPAWNED = 102, // Data: nodeId (unsigned)
-    STC_CHAT_MESSAGE = 103, // Data: senderName (String), message (String)
-    STC_SERVER_MESSAGE = 104, // Data: message (String)
-    STC_RETURN_TIME_UNTIL_SPAWN = 105, // Data: time (float)
+    STC_PLAYER_NAME_SETTED = 153, // Data: nameString
+    STC_PLAYER_SPAWNED, // Data: nodeId (unsigned)
+    STC_CHAT_MESSAGE, // Data: senderName (String), message (String)
+    STC_SERVER_MESSAGE, // Data: message (String)
+    STC_RETURN_TIME_UNTIL_SPAWN, // Data: time (float)
 
     // Client to server messages
 
-    CTS_REQUEST_NAME = 201, // Data: nameString
-    CTS_SET_MOVE_REQUEST = 202, // Data: normalizedMoveRequest (Vector2)
-    CTS_REQUEST_FIRE = 203, // Data: none
-    CTS_REQUEST_CHAT_MESSAGE = 204, // Data: message (String)
-    CTS_GET_TIME_UNTIL_SPAWN = 205 // Data: empty
+    CTS_REQUEST_NAME, // Data: nameString
+    CTS_SET_MOVE_REQUEST, // Data: normalizedMoveRequest (Vector2)
+    CTS_REQUEST_FIRE, // Data: none
+    CTS_REQUEST_CHAT_MESSAGE, // Data: message (String)
+    CTS_GET_TIME_UNTIL_SPAWN // Data: empty
 };
 }
