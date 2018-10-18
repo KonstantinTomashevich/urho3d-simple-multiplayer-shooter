@@ -149,7 +149,7 @@ Urho3D::Vector2 PlayerState::GetNormalizedMoveRequest ()
 
 void PlayerState::SetNormalizedMoveRequest (Urho3D::Vector2 normalizedMoveRequest)
 {
-    assert (normalizedMoveRequest.Length () <= sqrtf (2));
+    assert (normalizedMoveRequest.Length () <= sqrtf (2) + 0.0001f);
     normalizedMoveRequest_ = normalizedMoveRequest;
 }
 
