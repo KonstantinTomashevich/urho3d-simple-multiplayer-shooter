@@ -2,6 +2,10 @@ language: cpp
 compiler: gcc
 dist: stable
 before_script:
-- wget http://downloads.sourceforge.net/project/urho3d/Urho3D/1.6/Urho3D-1.6-Linux-64bit-STATIC.tar.gz -O Urho3D.tar.gz && tar -xvf Urho3D.tar.gz && export URHO3D_HOME=$PWD/Urho3D-1.6-Linux-64bit-STATIC/usr/local
+- "export DISPLAY=:99.0"
+- "sh -e /etc/init.d/xvfb start"
+- sleep 3
+- "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+- git clone https://github.com/urho3d/Urho3D.git && cd Urho3D && mkdir Build && cd Build && cmake .. -DCMAKE_INSTALL_PREFIX=SDK -DURHO3D_TOOLS=0 -DURHO3D_SAMPLES=0 && make && make install && export URHO3D_HOME=$PWD/SDK && cd .. && cd ..
 script:
 - mkdir build && cd build && cmake .. -DSERVER_ENABLE_ASSERTION=1 && make 
