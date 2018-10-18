@@ -37,7 +37,7 @@ if (NOT EXISTS "${CMAKE_SOURCE_DIR}/bin/CoreData")
     endif ()
 endif ()
 
-include (Urho3D-CMake-common)
+include (UrhoCommon)
 find_package (Urho3D REQUIRED)
 include_directories (${URHO3D_INCLUDE_DIRS})
 add_subdirectory (sources)

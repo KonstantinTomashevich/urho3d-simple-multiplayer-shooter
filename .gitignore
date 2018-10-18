@@ -30,6 +30,8 @@
 
 # Generated AngelScript API header
 AngelScriptAPI.hpp
+sources/GenerateBindingsHpp/Defines.hpp
+sources/Server/BuildConfiguration.hpp
 
 # Local files
 *.user
@@ -38,3 +40,4 @@ AngelScriptAPI.hpp
 # Urho3D's local files.
 bin/CoreData/*
 urho3d-cmake/*
+.idea/*
